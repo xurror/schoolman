@@ -17,6 +17,7 @@ class CreateFeesTable extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained();
             $table->decimal('fine')->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -20,6 +20,7 @@ class CreateAddressesTable extends Migration
             $table->string('region')->nullable(false);
             $table->string('city')->nullable(false);
             $table->foreignId('user_id')->constrained();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

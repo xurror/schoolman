@@ -17,6 +17,7 @@ class CreateDepartmentsTable extends Migration
             $table->id();
             $table->foreignId('faculty_id')->constrained();
             $table->string('name')->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

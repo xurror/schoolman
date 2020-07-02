@@ -20,6 +20,7 @@ class CreateResultsTable extends Migration
             $table->decimal('exam_mark')->nullable(true);
             $table->decimal('max_mark')->nullable(true);
             $table->decimal('grade')->nullable(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

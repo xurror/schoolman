@@ -19,6 +19,7 @@ class CreateCoursesTable extends Migration
             $table->string('code')->unique();
             $table->string('title')->nullable(false);
             $table->tinyInteger('credits')->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

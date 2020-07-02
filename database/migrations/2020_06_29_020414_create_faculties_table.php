@@ -16,6 +16,7 @@ class CreateFacultiesTable extends Migration
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

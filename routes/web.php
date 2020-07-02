@@ -1,41 +1,37 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Application Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Here is where you can register all of the routes for an application.
+| It is a breeze. Simply tell Lumen the URIs it should respond to
+| and give it the Closure to call when that URI is requested.
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+$router->get('/', function () use ($router) {
+    return $router->app->version();
 });
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::prefix('api')->group(function () {
+// Uses Auth Middleware
+$router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
     // Account Management
-    Route::put('/account', 'API\AccountController@update');
+    $router->put('/account', ['uses' => 'AccountController@update']);
 
     // Students Management
-    Route::get('/student', 'API\StudentController@index');
-    Route::post('/student', 'API\StudentController@store');
-    Route::get('/student/{id}', 'API\StudentController@show');
-    Route::put('/student/{id}', 'API\StudentController@update');
-    Route::delete('/student/{id}', 'API\StudentController@destroy');
+    $router->get('/student', ['uses' => 'StudentController@index']);
+    $router->post('/student', ['uses' => 'StudentController@store']);
+    $router->get('/student/{id}', ['uses' => 'StudentController@show']);
+    $router->put('/student/{id}', ['uses' => 'StudentController@update']);
+    $router->delete('/student/{id}', ['uses' => 'StudentController@destroy']);
 
-    // Get All Students.
-    // Get 
-    Route::apiResources([
-        'photos' => 'PhotoController',
-        'posts' => 'PostController'
-    ]);
+    $router->get('/', function () {
+        // Uses Auth Middleware
+    });
+
+    $router->get('user/profile', function () {
+        // Uses Auth Middleware
+    });
 });
