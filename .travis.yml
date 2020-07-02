@@ -16,11 +16,16 @@ before_script:
   - cp .env.example .env
   - composer self-update
   - composer install --no-interaction
+  - nvm install --lts
+  - npm install -g jshint
+  - npm install
   - php artisan migrate
   - php artisan key:generate
 
 script:
   - vendor/bin/phpunit
+  - npm run dev
+  - jshint resources/assets/js/modules/*
 
 cache:
   directories:
