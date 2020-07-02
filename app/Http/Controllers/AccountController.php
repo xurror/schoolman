@@ -29,7 +29,7 @@ class AccountController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'matricule' => 'required|string|min:10',
+            'matricule' => 'required|string|min:5|max:15',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
