@@ -21,6 +21,7 @@ before_script:
   - npm install
   - php artisan migrate
   - php artisan key:generate
+  - php artisan jwt:secret
 
 script:
   - vendor/bin/phpunit

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Student;
 
 class StudentController extends Controller {
 
@@ -27,11 +28,12 @@ class StudentController extends Controller {
         $students_full = array();
         $students = Student::all();
 
-        foreach ($students as $student) {
-            $user = $student->user();
-            $user.push($student->dor);
-            $user.push($student->dor);
-        }
+        // foreach ($students as $student) {
+        //     $user = $student->user();
+        //     array_push()
+        //     $students_full.push($user->dor);
+        //     $students_full.push($user->dor);
+        // }
         return $students;
     }
 

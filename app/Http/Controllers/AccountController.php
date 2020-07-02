@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -27,7 +28,6 @@ class AccountController extends Controller
      */
     public function update(Request $request)
     {
-        $user = Auth::user();
         $this->validate($request, [
             'matricule' => 'required|string|min:10',
             'name' => 'required|string|max:255',
@@ -40,17 +40,24 @@ class AccountController extends Controller
             'role' => 'required',
         ]);
 
-        $user->matricule = $data['matricule'];
-        $user->name = $data['name'];
-        $user->email = $data['email'];
-        $user->password = Hash::make($data['password']);
-        $user->phone = $data['phone'];
-        $user->dob = $data['dob'];
-        $user->gender = $data['gender'];
-        $user->marital_status = $data['marital_status'];
-        $user->role = $data['role'];
-        $user->save();
-        
-        return $user;
+        try {
+            $user = $request->user();
+            $user->matricule = $request['matricule'];
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->password = Hash::make($request['password']);
+            $user->phone = $request['phone'];
+            $user->dob = $request['dob'];
+            $user->gender = $request['gender'];
+            $user->marital_status = $request['marital_status'];
+            $user->role = $request['role'];
+            $user->save();
+            //return successful response
+            return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['message' => 'User Registration Failed!'], 409);
+        }
     }
 }

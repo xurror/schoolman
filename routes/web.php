@@ -15,10 +15,18 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+// API route group
+$router->group(['prefix' => 'auth'], function () use ($router) {
+    // Matches "/api/register
+    $router->post('/register', 'AuthController@register');
+    $router->post('/login', 'AuthController@login');
+
+ });
+
 // Uses Auth Middleware
 $router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
     // Account Management
-    $router->put('/account', ['uses' => 'AccountController@update']);
+    $router->put('/account', 'AccountController@update');
 
     // Students Management
     $router->get('/student', ['uses' => 'StudentController@index']);
