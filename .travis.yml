@@ -1,25 +1,35 @@
 dist: bionic
 
 language: php
+
 php:
   - 7.4.7
 
-before_script:
-  - cp .env.travis .env
+services:
+  - mysql
+
+before_install:
   - echo "USE mysql;\nALTER USER 'root'@'localhost' IDENTIFIED BY 'mysql';\n" | mysql -u root
   - mysql -u root -pmysql -e 'CREATE DATABASE IF NOT EXISTS `schoolman`;'
+
+before_script:
+  - cp .env.example .env
   - composer self-update
   - composer install --no-interaction
-  - php artisan migrate --no-interaction -vvv
-  
-script:
+  - php artisan migrate
   - php artisan key:generate
-  - vendor/bin/phpunit --coverage-text
-  - phpcs --ignore=app/Http/Controllers/Auth,app/Http/Controllers/Controller.php app/Http/Controllers
-  - npm run production
-  - jshint resources/assets/js/modules/*
+
+script:
+  - vendor/bin/phpunit
 
 cache:
   directories:
-    - node_modules
-    - vendor
+  - node_modules
+  - vendor
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: WUGxDlAUQbQV9IPTDdWfcN6PZppqsYTN6AzLiYlKvfxEoYUC2N7yMspeZT0UVQRezYvzH4QHvYhNHvfWRS37Wynu1sKJKKhScwT8wYhVK+ZHR2wXNyzHPwYNztCbu/FMhAKvQc+AC9ySQga7b0WR8DOlAo8gIxU2zp9+txeuQ/KvpAJ+oWmdKWaGZz+qRogIfzPtEMjrhtUTdJj/I1eI6T3BA4uaQqrtgXkOWwxy53/8s5LzMmhUSRHx1a5cKYN7SJwXtG9H5izlHkdc1Xq6AQv2gJrsYeJEv8qPrge1zfuWKQ4CmnFVANzs+P2hpb3yWRJpG2OY9j52jLzoPVgEfqfVOeFyRC0bUdie8+nhb8kIpBMUfYfivIgvaxb11yFWm5nDyiWVVyx9KLVcg7CMneHEtE0IrBNNXQipGupLyOOA/D4B2PUD0Phwzim0Ll2swbFkmU6TL6IuD8/ycp2xBDK5R4Z8WKPfOvPbMcKilEOQqSmJeHpyo4CCk2ti0rXCj2bgB5+b0bOri6xyb6Qed/W434gGHRlbE9OSLq78MWGZAL2d+dLVRbcmXsASWDxQsZig1lXQWR2mZd1BBaUAOcbTKqRKJNTAb3SQxinGwSmntMKcj8KQHtqbkBtfVsSR2JW9blD7eRt1n9amXGKrlNf8OdDZglp17ancQmLoLY8=
+  on: master
+  app: schoolman-ub
