@@ -31,22 +31,22 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 Authentication uses jwt.
 
 1. Registration:
-    - ```POST /auth/register contentType: application/json body: {
-            "matricule":"required|string|min:5|max:15",
-            "name":"required|string|max:255",
-            "email":"required|string|email|max:255|unique:users",
-            "password":"required|string|min:8|confirmed",
-            "phone":"required|string|min:9|max:12",
-            "dob":"required|date eg: 2020-02-03",
-            "gender":"enum[male, female, other]",
-            "marital_status":"enum[single, married]",
-            "role":"enum[student, staff]"
-        }```
-    - returns [token, token_type, expires_in]
+    - `POST /auth/register contentType: application/json body: {`
+            `"matricule":"required|string|min:5|max:15",`
+            `"name":"required|string|max:255",`
+            `"email":"required|string|email|max:255|unique:users",`
+            `"password":"required|string|min:8|confirmed",`
+            `"phone":"required|string|min:9|max:12",`
+            `"dob":"required|date eg: 2020-02-03",`
+            `"gender":"enum[male, female, other]",`
+            `"marital_status":"enum[single, married]",`
+            `"role":"enum[student, staff]"`
+        `}`
+    - returns user
 
 1. Login
-    - ```POST /auth/login contentType: application/json body: {
-            "username":"FE17A091",
-            "password":"password"
-        }```
-    - returns user
+    - `POST /auth/login contentType: application/json body: {`
+            `"username":"FE17A091",`
+            `"password":"password"`
+        `}`
+    - returns [user, token, token_type, expires_in]
