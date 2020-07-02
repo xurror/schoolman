@@ -16,3 +16,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::prefix('api')->group(function () {
+    // Account Management
+    Route::put('/account', 'API\AccountController@update');
+
+    // Students Management
+    Route::get('/student', 'API\StudentController@index');
+    Route::post('/student', 'API\StudentController@store');
+    Route::get('/student/{id}', 'API\StudentController@show');
+    Route::put('/student/{id}', 'API\StudentController@update');
+    Route::delete('/student/{id}', 'API\StudentController@destroy');
+
+    // Get All Students.
+    // Get 
+    Route::apiResources([
+        'photos' => 'PhotoController',
+        'posts' => 'PostController'
+    ]);
+});

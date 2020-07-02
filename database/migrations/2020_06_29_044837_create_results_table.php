@@ -16,10 +16,10 @@ class CreateResultsTable extends Migration
         Schema::create('results', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained();
-            $table->decimal('ca_mark')->nullable(false);
-            $table->decimal('exam_mark')->nullable(false);
-            $table->decimal('max_mark')->nullable(false);
-            $table->decimal('grade')->nullable(false);
+            $table->decimal('ca_mark')->nullable(true);
+            $table->decimal('exam_mark')->nullable(true);
+            $table->decimal('max_mark')->nullable(true);
+            $table->decimal('grade')->nullable(true);
             $table->timestamps();
         });
     }
