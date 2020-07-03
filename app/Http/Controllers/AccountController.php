@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Staff;
+use App\Models\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -52,6 +54,14 @@ class AccountController extends Controller
             $user->marital_status = $request['marital_status'];
             $user->role = $request['role'];
             $user->save();
+
+            if ($request['role'] == "student") {
+                $student = new Student();
+                $student->user_id = $user->id;
+            } else {
+                $staff = new Staff();
+                $staff->user_id = $user->id;
+            }
             //return successful response
             return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
 

@@ -28,25 +28,8 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 
 # Authentication endpoints and expected input:
 
-Authentication uses jwt.
-
-1. Registration:
-    - `POST /auth/register contentType: application/json body: {`
-            `"matricule":"required|string|min:5|max:15",`
-            `"name":"required|string|max:255",`
-            `"email":"required|string|email|max:255|unique:users",`
-            `"password":"required|string|min:8|confirmed",`
-            `"phone":"required|string|min:9|max:12",`
-            `"dob":"required|date eg: 2020-02-03",`
-            `"gender":"enum[male, female, other]",`
-            `"marital_status":"enum[single, married]",`
-            `"role":"enum[student, staff]"`
-        `}`
-    - returns user
+Authentication uses jwt. Use default login below for admin
 
 1. Login
-    - `POST /auth/login contentType: application/json body: {`
-            `"username":"FE17A091",`
-            `"password":"password"`
-        `}`
+    - `POST /auth/login contentType: application/json body: {               "username":"admin123", "password":"password", "role":"admin" }`
     - returns [user, token, token_type, expires_in]

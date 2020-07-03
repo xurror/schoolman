@@ -19,7 +19,6 @@ class CreateUsersTable extends Migration
             $table->string('name')->nullable(false);
 
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
             $table->string('phone')->nullable(false);
@@ -27,7 +26,7 @@ class CreateUsersTable extends Migration
 
             $table->enum('gender', ['male', 'female', 'other'])->nullable(false);
             $table->enum('marital_status', ['married', 'single'])->nullable(false);
-            $table->enum('role', ['student', 'staff'])->nullable(false);
+            $table->enum('role', ['admin', 'student', 'staff'])->nullable(false);
 
             $table->softDeletes();
             $table->timestamps();

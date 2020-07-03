@@ -29,7 +29,6 @@ class AuthController extends Controller
             'dob' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
-            'role' => 'required',
         ]);
 
         try {
@@ -42,7 +41,7 @@ class AuthController extends Controller
             $user->dob = $request['dob'];
             $user->gender = $request['gender'];
             $user->marital_status = $request['marital_status'];
-            $user->role = $request['role'];
+            $user->role = "admin";
             $user->save();
             //return successful response
             return response()->json(['user' => $user, 'message' => 'new User Created'], 201);
@@ -65,6 +64,7 @@ class AuthController extends Controller
         $this->validate($request, [
             'username' => 'required|string',
             'password' => 'required|string',
+            'role' => 'required|string',
         ]);
 
         if (filter_var($request->input('username'), FILTER_VALIDATE_EMAIL)) {
