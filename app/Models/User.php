@@ -64,15 +64,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     public function staff() {
-        return $this->hasMany('App\Models\Staff');
+        return $this->hasOne('App\Models\Staff');
     }
 
     public function addresses() {
         return $this->hasMany('App\Models\Address');
     }
 
-    public function students() {
-        return $this->hasMany('App\Models\Student');
+    public function student() {
+        return $this->hasOne('App\Models\Student');
     }
 
 }

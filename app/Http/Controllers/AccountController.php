@@ -34,12 +34,10 @@ class AccountController extends Controller
             'matricule' => 'required|string|min:5|max:15',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'phone' => 'required|string|min:9|max:12',
             'dob' => 'required|date',
-            'gender' => 'required',
             'marital_status' => 'required',
-            'role' => 'required',
         ]);
 
         try {
@@ -50,9 +48,7 @@ class AccountController extends Controller
             $user->password = Hash::make($request['password']);
             $user->phone = $request['phone'];
             $user->dob = $request['dob'];
-            $user->gender = $request['gender'];
             $user->marital_status = $request['marital_status'];
-            $user->role = $request['role'];
             $user->save();
 
             if ($request['role'] == "student") {
@@ -63,11 +59,11 @@ class AccountController extends Controller
                 $staff->user_id = $user->id;
             }
             //return successful response
-            return response()->json(['user' => $user, 'message' => 'CREATED'], 201);
+            return response()->json(['user' => $user, 'message' => 'User updated'], 200);
 
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User Registration Failed!'], 409);
+            return response()->json(['message' => 'User update Failed!'], 409);
         }
     }
 }

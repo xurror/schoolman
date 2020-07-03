@@ -2,30 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Student;
+use App\Models\Staff;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class StudentController extends Controller {
-
+class StaffController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function allstudents()
+    public function allstaff()
     {
-        $student = DB::table('users')
-                        ->join('students', 'users.id', '=', 'students.user_id')
-                        ->join('departments', 'departments.id', '=', 'students.department_id')
+        $staff = DB::table('users')
+                        ->join('staff', 'users.id', '=', 'staff.user_id')
+                        ->join('departments', 'departments.id', '=', 'staff.department_id')
                         ->join('faculties', 'faculties.id', '=', 'departments.faculty_id')
-                        ->select('users.*', 'students.dor', 'departments.name', 'faculties.name')
+                        ->select('users.*', 'staff.nature_of_job', 'staff.basic_pay', 'staff.dh', 'departments.name', 'faculties.name')
                         ->get();
-        return response()->json(['user' => $student, 'message' => 'All students and details'], 200);
+        return response()->json(['user' => $staff, 'message' => 'All students and details'], 200);
     }
 
     /**
@@ -36,6 +35,7 @@ class StudentController extends Controller {
      */
     public function create(Request $request)
     {
+
         $this->validate($request, [
             'matricule' => 'required|string|min:5|max:15|unique:users',
             'name' => 'required|string|max:255',
@@ -45,26 +45,32 @@ class StudentController extends Controller {
             'dob' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
+            'department' => 'required',
+            'nature_of_job' => 'required|string|max:255',
+            'basic_pay' => 'required|string|max:255',
         ]);
 
         try {
-            $student = new User();
-            $student->matricule = $request['matricule'];
-            $student->name = $request['name'];
-            $student->email = $request['email'];
-            $student->password = Hash::make($request['password']);
-            $student->phone = $request['phone'];
-            $student->dob = $request['dob'];
-            $student->gender = $request['gender'];
-            $student->marital_status = $request['marital_status'];
-            $student->role = "student";
-            $student->save();
+            $staff = new User();
+            $staff->matricule = $request['matricule'];
+            $staff->name = $request['name'];
+            $staff->email = $request['email'];
+            $staff->password = Hash::make($request['password']);
+            $staff->phone = $request['phone'];
+            $staff->dob = $request['dob'];
+            $staff->gender = $request['gender'];
+            $staff->marital_status = $request['marital_status'];
+            $staff->role = "staff";
+            $staff->save();
 
-            $student_details = new Student([
-                'department_id' => $request['department_id'],
+            $department_id = DB::table('departments')->select('id')
+                                ->where('name', $request['department'])->first();
+
+            $staff_details = new Staff([
+                'department_id' => $department_id,
+                'nature_of_job' => $request['nature_of_job'],
+                'basic_pay' => $request['basic_pay'],
             ]);
-
-            $student->student()->save($student_details);
 
             // $user_id = DB::table('users')->insertGetId([
             //     'matricule' => $request['matricule'],
@@ -78,18 +84,20 @@ class StudentController extends Controller {
             //     'role' => "staff",
             // ]);
 
-            // $student_id = DB::table('student')->insertGetId([
+
+            // $staff_id = DB::table('staff')->insertGetId([
             //     'user_id' => $user_id,
-            //     'department_id' => $request['department_id'],
+            //     'department_id' => $department_id,
+            //     'nature_of_job' => $request['nature_of_job'],
             //     'basic_pay' => $request['basic_pay'],
             // ]);
 
             // $staff = DB::table('users')->find($user_id);
 
-            $student['extra_details'] = $student_details;
+            $staff['extra_details'] = $staff_details;
 
             //return successful response
-            return response()->json(['user' => $student, 'message' => 'new User Created'], 200);
+            return response()->json(['user' => $staff, 'message' => 'new User Created'], 200);
 
         } catch (Exception $e) {
             //return error message

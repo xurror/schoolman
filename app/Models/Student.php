@@ -25,15 +25,15 @@ class Student extends Model {
         return $this->belongsTo('App\Models\Department');
     }
 
-    public function courses() {
-        return $this->hasMany('App\Models\Course');
-    }
-
     public function results() {
         return $this->hasMany('App\Models\Result');
     }
 
     public function fees() {
         return $this->hasMany('App\Models\Fee');
+    }
+
+    public function courses() {
+        return $this->belongsToMany('App\Models\Course')->using('App\Models\CourseStudent');
     }
 }

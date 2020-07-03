@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Staff;
+use App\Models\Student;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -13,7 +16,9 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
+        $faker = Faker\Factory::create();
+
+        User::create([
             'matricule' => 'admin123',
             'name' => 'admin',
             'email' => 'admin@gmail.com',
@@ -24,5 +29,38 @@ class UserSeeder extends Seeder
             'marital_status' => 'single',
             'role' => 'admin',
         ]);
+
+        $student = User::create([
+            'matricule' => Str::random(8),
+            'name' => $faker->name,
+            'email' => $faker->unique()->email,
+            'password' => Hash::make($faker->password(8)),
+            'phone' => $faker->unique()->e164PhoneNumber,
+            'dob' => $faker->dateTimeThisCentury->format('Y-m-d'),
+            'gender' => 'male',
+            'marital_status' => 'single',
+            'role' => 'student',
+        ]);
+        $student_details = new Student(['department_id' => 1,]);
+        $student->student()->save($student_details);
+
+        $staff = User::create([
+            'matricule' => Str::random(8),
+            'name' => $faker->name,
+            'email' => $faker->unique()->email,
+            'password' => Hash::make($faker->password(8)),
+            'phone' => $faker->unique()->e164PhoneNumber,
+            'dob' => $faker->dateTimeThisCentury->format('Y-m-d'),
+            'gender' => 'female',
+            'marital_status' => 'single',
+            'role' => 'staff',
+        ]);
+        $staff->save();
+        $staff_details = new Staff([
+            'department_id' => 1,
+            'nature_of_job' => 'lecturer',
+            'basic_pay' => '100000',
+        ]);
+        $staff->student()->save($staff_details);
     }
 }

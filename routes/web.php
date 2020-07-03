@@ -17,20 +17,19 @@ $router->get('/', function () use ($router) {
 
 // API route group
 $router->group(['prefix' => 'auth'], function () use ($router) {
-    // Matches "/api/register
-    $router->post('/register', 'AuthController@register');
+    // $router->post('/register', 'AuthController@register');
     $router->post('/login', 'AuthController@login');
 
  });
 
 // Uses Auth Middleware
 $router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
-    // Account Management
+    // Account Management(Update profile)
     $router->put('/account', 'AccountController@update');
 
     // Students Management
-    $router->get('/student', ['uses' => 'StudentController@index']);
-    $router->post('/student', ['uses' => 'StudentController@store']);
+    $router->get('/student', ['uses' => 'StudentController@allstudents']); // Get All students
+    $router->post('/student', ['uses' => 'StudentController@create']); // Create a new student
     $router->get('/student/{id}', ['uses' => 'StudentController@show']);
     $router->put('/student/{id}', ['uses' => 'StudentController@update']);
     $router->delete('/student/{id}', ['uses' => 'StudentController@destroy']);
