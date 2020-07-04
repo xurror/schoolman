@@ -16,7 +16,7 @@ class StudentAccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getCourses()
+    public function getRegisteredCourses()
     {
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
@@ -41,7 +41,7 @@ class StudentAccountController extends Controller
         $courses_id = array();
 
         foreach($request['codes'] as $code) {
-            $course_id = Course::where('code', $request['code'])->first()->id;
+            $course_id = Course::where('code', $code['code'])->first()->id;
             array_push($courses_id, $course_id);
         }
 
@@ -100,23 +100,17 @@ class StudentAccountController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'matricule' => 'required|string|min:5|max:15',
-            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
             'marital_status' => 'required',
         ]);
 
         try {
             $user = $request->user();
-            $user->matricule = $request['matricule'];
-            $user->name = $request['name'];
             $user->email = $request['email'];
             $user->password = Hash::make($request['password']);
             $user->phone = $request['phone'];
-            $user->dob = $request['dob'];
             $user->marital_status = $request['marital_status'];
             $user->save();
 

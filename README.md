@@ -57,6 +57,74 @@ Authentication uses jwt. Use default logins below for admin, student and staff
 
 # 2. Admin Actions from Admin Account
 
+    # Update Profile
+
+        - `PUT /account/student contentType: application/json body: {
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'marital_status' => 'required',
+            }`
+        - return user
+
+    2. Get Courses
+        - `GET /account/student/courses
+
+        -return all registered courses
+
+    3. Register Courses
+        - `POST /account/student/courses contentType: application/json body: {
+                'codes' => [
+                    {
+                        "code":"required eg CEFXXX"
+                    },
+                ]
+            }`
+
+        - return registered Courses
+
+    2. Get Results
+        - `GET /account/student/results
+
+        -return all courses results
+
+    2. Get fees
+        - `GET /account/student/fees
+
+        -return all fees
+
+# 3. Student Actions from Student Account
+
+    # Update Profile
+
+        - `PUT /account/staff contentType: application/json body: {
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'marital_status' => 'required',
+            }`
+        - return user
+
+    2. Get Courses
+        - `GET /account/student/courses
+
+        -return all registered courses
+
+    3. Register Marks
+        - `POST /account/student/marks contentType: application/json body: {
+                'marks' => [
+                    {
+                        "matricule":"required",
+                        "code":"required eg CEFXXX",
+                        "ca_mark":"required",
+                        "exam_mark":"required",
+                        "grade":"required",
+                    },
+                ]
+            }`
+
+# 4. Staff Actions from Staff Account
+
     # Account Management
 
     1. Update profile

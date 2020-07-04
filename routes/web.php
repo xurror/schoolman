@@ -28,7 +28,7 @@ $router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($ro
     // Student Actions from Student Account
     $router->group(['prefix' => 'account/student', 'middleware' => 'is_student'], function () use ($router) {
         $router->put('/', 'StudentAccountController@update');
-        $router->get('/courses', 'StudentAccountController@getCourses');
+        $router->get('/courses', 'StudentAccountController@getRegisteredCourses');
         $router->get('/results', 'StudentAccountController@getResults');
         $router->get('/fees', 'StudentAccountController@getFees');
         $router->post('/courses', 'StudentAccountController@registerCourses');

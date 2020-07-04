@@ -9,6 +9,8 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StaffAccountController extends Controller
 {
@@ -89,5 +91,32 @@ class StaffAccountController extends Controller
 
         }
         return response()->json(['message' => 'Successfully registered marks'], 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'phone' => 'required|string|min:9|max:12',
+            'marital_status' => 'required',
+        ]);
+
+        try {
+            $staff = User::findOrFail($id);
+            $staff->email = $request['email'];
+            $staff->password = Hash::make($request['password']);
+            $staff->phone = $request['phone'];
+            $staff->marital_status = $request['marital_status'];
+            $staff->save();
+
+            //return successful response
+            return response()->json(['staff' => $staff, 'message' => 'Staff updated successfully'], 200);
+
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'Staff update Failed!'], 409);
+        }
     }
 }
