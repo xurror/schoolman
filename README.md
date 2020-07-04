@@ -30,107 +30,126 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 
 Authentication uses jwt. Use default logins below for admin, student and staff
 
-1. Login
+# 1. Login
+
     - ADMIN:
     `POST /auth/login contentType: application/json body: {               "username":"admin123", "password":"password", "role":"admin" }`
     
     - STUDENT:
-    `POST /auth/login contentType: application/json body: {               "username":"student123", "password":"password", "role":"admin" }`
+    `POST /auth/login contentType: application/json body: {               "username":"student123", "password":"password", "role":"student" }`
 
     - STAFF
-    `POST /auth/login contentType: application/json body: {               "username":"staff123", "password":"password", "role":"admin" }`
+    `POST /auth/login contentType: application/json body: {               "username":"staff123", "password":"password", "role":"staff" }`
 
     - returns [user, token, token_type, expires_in]
 
-2. Admin Actions from Admin Account
-    - Update profile
-    `PUT /admin contentType: application/json body: {
-            'matricule' => 'required|string|min:5|max:15',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
-            'marital_status' => 'required', 
-        }`
+# 2. Admin Actions from Admin Account
 
-    return $user;
+    1. Update profile
+
+        - `PUT /admin contentType: application/json body: {
+                'matricule' => 'required|string|min:5|max:15',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'dob' => 'required|date',
+                'marital_status' => 'required', 
+            }`
+
+        - return $user;
     
-    - Get all students
-    `GET /admin/student`
+    1. Get all students
 
-    - Get all staff
-    `GET /admin/staff`
+        - `GET /admin/student`
 
-    - Create a single student
-    `POST /admin/student contentType: application/json body: {
-            'matricule' => 'required|string|min:5|max:15|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
-            'gender' => 'required',
-            'marital_status' => 'required',
-            'department' => 'required',
-        }`
-    return created student
+    1. Get all staff
 
-    - Create a single staff member
-    `POST /admin/staff contentType: application/json body: {
-            'matricule' => 'required|string|min:5|max:15|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
-            'gender' => 'required',
-            'marital_status' => 'required',
-            'department' => 'required',
-            'nature_of_job' => 'required|string|max:255',
-            'basic_pay' => 'required|string|max:255',
-        }`
-    return created staff member
+        - `GET /admin/staff`
 
-    - Get single students
-    `GET /admin/student/{id}`
+    1. Create a single student
 
-    - Get single staff member
-    `GET /admin/staff/{id}`
+        - `POST /admin/student contentType: application/json body: {
+                'matricule' => 'required|string|min:5|max:15|unique:users',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'dob' => 'required|date',
+                'gender' => 'required',
+                'marital_status' => 'required',
+                'department' => 'required',
+            }`
 
-    - Update a single student
-    `PUT /admin/student/{id} contentType: application/json body: {
-            'matricule' => 'required|string|min:5|max:15|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
-            'gender' => 'required',
-            'marital_status' => 'required',
-            'department' => 'required',
-        }`
-    return created student
+        - return created student
 
-    - Update a single staff member
-    `PUT /admin/staff/{id} contentType: application/json body: {
-            'matricule' => 'required|string|min:5|max:15|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
-            'gender' => 'required',
-            'marital_status' => 'required',
-            'department' => 'required',
-            'nature_of_job' => 'required|string|max:255',
-            'basic_pay' => 'required|string|max:255',
-        }`
-    return created staff member
+    1. Create a single staff member
 
-    - delete single students
-    `DELETE /admin/student/{id}`
+        - `POST /admin/staff contentType: application/json body: {
+                'matricule' => 'required|string|min:5|max:15|unique:users',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'dob' => 'required|date',
+                'gender' => 'required',
+                'marital_status' => 'required',
+                'department' => 'required',
+                'nature_of_job' => 'required|string|max:255',
+                'basic_pay' => 'required|string|max:255',
+            }`
 
-    - delete single staff member
-    `DELETE /admin/staff/{id}`
+        - return created staff member
+
+    1. Get single students
+
+        - `GET /admin/student/{id}`
+
+    1. Get single staff member
+
+        - `GET /admin/staff/{id}`
+
+    1. Update a single student
+
+        - `PUT /admin/student/{id} contentType: application/json body: {
+                'matricule' => 'required|string|min:5|max:15|unique:users',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'dob' => 'required|date',
+                'gender' => 'required',
+                'marital_status' => 'required',
+                'department' => 'required',
+            }`
+
+        - return created student
+
+    1. Update a single staff member
+
+        - `PUT /admin/staff/{id} contentType: application/json body: {
+                'matricule' => 'required|string|min:5|max:15|unique:users',
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'phone' => 'required|string|min:9|max:12',
+                'dob' => 'required|date',
+                'gender' => 'required',
+                'marital_status' => 'required',
+                'department' => 'required',
+                'nature_of_job' => 'required|string|max:255',
+                'basic_pay' => 'required|string|max:255',
+            }`
+
+        - return created staff member
+
+    1. delete single students
+
+        - `DELETE /admin/student/{id}`
+
+    1. delete single staff member
+
+        - `DELETE /admin/staff/{id}`
+
+
 
