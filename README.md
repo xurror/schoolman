@@ -26,6 +26,10 @@ The Lumen framework is open-sourced software licensed under the [MIT license](ht
 
 ## Docs
 
+# How to run
+
+`php artisan`
+
 # Authentication endpoints and expected input:
 
 Authentication uses jwt. Use default logins below for admin, student and staff
