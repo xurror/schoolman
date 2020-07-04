@@ -17,6 +17,10 @@ class Staff extends Model {
         'nature_of_job', 'basic_pay', 'doj',
     ];
 
+    public function courses() {
+        return $this->hasMany('App\Models\Course');
+    }
+
     public function user() {
         return $this->belongsTo('App\Models\User');
     }

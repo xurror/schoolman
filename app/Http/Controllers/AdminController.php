@@ -2,24 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Staff;
-use App\Models\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
-class AccountController extends Controller
-{
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+class AdminController extends Controller {
 
     /**
      * Update the specified resource in storage.
@@ -51,13 +38,6 @@ class AccountController extends Controller
             $user->marital_status = $request['marital_status'];
             $user->save();
 
-            if ($request['role'] == "student") {
-                $student = new Student();
-                $student->user_id = $user->id;
-            } else {
-                $staff = new Staff();
-                $staff->user_id = $user->id;
-            }
             //return successful response
             return response()->json(['user' => $user, 'message' => 'User updated'], 200);
 

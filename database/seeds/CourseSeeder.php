@@ -2,7 +2,6 @@
 
 use App\Models\Course;
 use App\Models\Student;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class CourseSeeder extends Seeder
@@ -18,6 +17,7 @@ class CourseSeeder extends Seeder
 
         $course1 = Course::create([
             'department_id' => 1,
+            'staff_id' => 1,
             'code' => 'CEF438',
             'title' => 'Databases and Administration',
             'credits' => 5,
@@ -25,6 +25,7 @@ class CourseSeeder extends Seeder
 
         $course2 = Course::create([
             'department_id' => 1,
+            'staff_id' => 1,
             'code' => 'CEF426',
             'title' => 'Software Engineering and Design',
             'credits' => 5,
@@ -32,6 +33,7 @@ class CourseSeeder extends Seeder
 
         $course3 = Course::create([
             'department_id' => 1,
+            'staff_id' => 1,
             'code' => 'CEF444',
             'title' => 'AI and Machine Learning',
             'credits' => 5,
@@ -39,6 +41,7 @@ class CourseSeeder extends Seeder
 
         $course4 = Course::create([
             'department_id' => 1,
+            'staff_id' => 1,
             'code' => 'CEF462',
             'title' => 'Digital Image Processing',
             'credits' => 5,
@@ -46,6 +49,7 @@ class CourseSeeder extends Seeder
 
         $course5 = Course::create([
             'department_id' => 1,
+            'staff_id' => 1,
             'code' => 'CEF440',
             'title' => 'Internet and Mobile Programming',
             'credits' => 5,

@@ -14,7 +14,7 @@ class DepartmentSeeder extends Seeder
     {
         DB::table('departments')->insert([
             'faculty_id' => 1,
-            'name' => 'Department of Computer Engineering',
+            'name' => strtolower('Department of Computer Engineering'),
         ]);
     }
 }

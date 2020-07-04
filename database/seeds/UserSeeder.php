@@ -31,10 +31,12 @@ class UserSeeder extends Seeder
         ]);
 
         $student = User::create([
-            'matricule' => Str::random(8),
+            // 'matricule' => strtoupper(Str::random(8)),
+            'matricule' => strtoupper('student123'),
             'name' => $faker->name,
             'email' => $faker->unique()->email,
-            'password' => Hash::make($faker->password(8)),
+            // 'password' => Hash::make($faker->password(8)),
+            'password' => Hash::make("password"),
             'phone' => $faker->unique()->e164PhoneNumber,
             'dob' => $faker->dateTimeThisCentury->format('Y-m-d'),
             'gender' => 'male',
@@ -45,10 +47,12 @@ class UserSeeder extends Seeder
         $student->student()->save($student_details);
 
         $staff = User::create([
-            'matricule' => Str::random(8),
+            // 'matricule' => strtoupper(Str::random(8)),
+            'matricule' => strtoupper('staff123'),
             'name' => $faker->name,
             'email' => $faker->unique()->email,
-            'password' => Hash::make($faker->password(8)),
+            // 'password' => Hash::make($faker->password(8)),
+            'password' => Hash::make("password"),
             'phone' => $faker->unique()->e164PhoneNumber,
             'dob' => $faker->dateTimeThisCentury->format('Y-m-d'),
             'gender' => 'female',

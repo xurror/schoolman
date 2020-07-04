@@ -13,7 +13,7 @@ class FacultySeeder extends Seeder
     public function run()
     {
         DB::table('faculties')->insert([
-            'name' => 'Faculty of Engineering and Technology',
+            'name' => strtolower('Faculty of Engineering and Technology'),
         ]);
     }
 }

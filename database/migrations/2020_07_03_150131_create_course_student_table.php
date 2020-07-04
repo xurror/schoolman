@@ -17,6 +17,11 @@ class CreateCourseStudentTable extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained();
             $table->foreignId('course_id')->constrained();
+            $table->decimal('ca_mark')->nullable(true);
+            $table->decimal('exam_mark')->nullable(true);
+            $table->decimal('max_mark')->nullable(true);
+            $table->string('grade')->nullable(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

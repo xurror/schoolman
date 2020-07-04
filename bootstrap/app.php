@@ -78,6 +78,9 @@ $app->configure('app');
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'is_admin' => App\Http\Middleware\IsAdmin::class,
+    'is_staff' => App\Http\Middleware\IsStaff::class,
+    'is_student' => App\Http\Middleware\IsStudent::class,
 ]);
 
 /*
