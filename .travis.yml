@@ -13,6 +13,7 @@ before_install:
   - mysql -u root -pmysql -e 'CREATE DATABASE IF NOT EXISTS `schoolman`;'
 
 before_script:
+  - touch schoolmandb.sqlite
   - cp .env.example .env
   - composer self-update
   - composer install --no-interaction
