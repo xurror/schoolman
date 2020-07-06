@@ -13,7 +13,6 @@ before_install:
   - mysql -u root -pmysql -e 'CREATE DATABASE IF NOT EXISTS `schoolman`;'
 
 before_script:
-  - touch schoolmandb.sqlite
   - cp .env.example .env
   - composer self-update
   - composer install --no-interaction
@@ -35,3 +34,4 @@ deploy:
     secure: WUGxDlAUQbQV9IPTDdWfcN6PZppqsYTN6AzLiYlKvfxEoYUC2N7yMspeZT0UVQRezYvzH4QHvYhNHvfWRS37Wynu1sKJKKhScwT8wYhVK+ZHR2wXNyzHPwYNztCbu/FMhAKvQc+AC9ySQga7b0WR8DOlAo8gIxU2zp9+txeuQ/KvpAJ+oWmdKWaGZz+qRogIfzPtEMjrhtUTdJj/I1eI6T3BA4uaQqrtgXkOWwxy53/8s5LzMmhUSRHx1a5cKYN7SJwXtG9H5izlHkdc1Xq6AQv2gJrsYeJEv8qPrge1zfuWKQ4CmnFVANzs+P2hpb3yWRJpG2OY9j52jLzoPVgEfqfVOeFyRC0bUdie8+nhb8kIpBMUfYfivIgvaxb11yFWm5nDyiWVVyx9KLVcg7CMneHEtE0IrBNNXQipGupLyOOA/D4B2PUD0Phwzim0Ll2swbFkmU6TL6IuD8/ycp2xBDK5R4Z8WKPfOvPbMcKilEOQqSmJeHpyo4CCk2ti0rXCj2bgB5+b0bOri6xyb6Qed/W434gGHRlbE9OSLq78MWGZAL2d+dLVRbcmXsASWDxQsZig1lXQWR2mZd1BBaUAOcbTKqRKJNTAb3SQxinGwSmntMKcj8KQHtqbkBtfVsSR2JW9blD7eRt1n9amXGKrlNf8OdDZglp17ancQmLoLY8=
   on: master
   app: schoolman-ub
+  run: "php artisan migrate --seed"
