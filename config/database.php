@@ -1,6 +1,6 @@
 <?php
 
-$DATABASE_URL = parse_url('postgres://cpxyileajtapti:30eb57601e627d1324db1c282fbc628ab911a6e3dcb83ef0baa0b498991d8473@ec2-54-211-210-149.compute-1.amazonaws.com:5432/dej5lod1sg5htmL');
+$DATABASE_URL = parse_url('postgres://cpxyileajtapti:30eb57601e627d1324db1c282fbc628ab911a6e3dcb83ef0baa0b498991d8473@ec2-54-211-210-149.compute-1.amazonaws.com:5432/dej5lod1sg5htm');
 
 return [
 
@@ -58,6 +58,7 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
+            'url' => 'postgres://cpxyileajtapti:30eb57601e627d1324db1c282fbc628ab911a6e3dcb83ef0baa0b498991d8473@ec2-54-211-210-149.compute-1.amazonaws.com:5432/dej5lod1sg5htm',
             'host' => $DATABASE_URL["host"],
             'port' => $DATABASE_URL["port"],
             'database' => ltrim($DATABASE_URL["path"], "/"),
