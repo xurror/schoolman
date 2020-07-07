@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Hash;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
-        'matricule' => $faker->matricule,
+        // 'matricule' => strtoupper($faker->matricule),
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'password' => Hash::make('password'), // password

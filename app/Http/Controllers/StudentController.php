@@ -29,7 +29,7 @@ class StudentController extends Controller {
 
             $student_details = (object) [
                 "id" => $student->id,
-                "matricule" => $student->matricule,
+                "matricule" => strtoupper($student->matricule),
                 "name" => $student->name,
                 "email" => $student->email,
                 "password" => $student->password,
@@ -68,7 +68,7 @@ class StudentController extends Controller {
 
         try {
             $student = new User();
-            $student->matricule = $request['matricule'];
+            $student->matricule = strtoupper($request['matricule']);
             $student->name = $request['name'];
             $student->email = $request['email'];
             $student->password = Hash::make($request['password']);
@@ -93,7 +93,7 @@ class StudentController extends Controller {
 
             $student_details = (object) [
                 "id" => $student->id,
-                "matricule" => $student->matricule,
+                "matricule" => strtoupper($student->matricule),
                 "name" => $student->name,
                 "email" => $student->email,
                 "password" => $student->password,
@@ -131,7 +131,7 @@ class StudentController extends Controller {
 
             $student_details = (object) [
                 "id" => $student->id,
-                "matricule" => $student->matricule,
+                "matricule" => strtoupper($student->matricule),
                 "name" => $student->name,
                 "email" => $student->email,
                 "password" => $student->password,
@@ -172,7 +172,7 @@ class StudentController extends Controller {
 
         try {
             $student = User::findOrFail($id);
-            $student->matricule = $request['matricule'];
+            $student->matricule = strtoupper($request['matricule']);
             $student->name = $request['name'];
             $student->email = $request['email'];
             $student->password = Hash::make($request['password']);
@@ -196,7 +196,7 @@ class StudentController extends Controller {
 
             $student_details = (object) [
                 "id" => $student->id,
-                "matricule" => $student->matricule,
+                "matricule" => strtoupper($student->matricule),
                 "name" => $student->name,
                 "email" => $student->email,
                 "password" => $student->password,

@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         $faker = Faker\Factory::create();
 
         User::create([
-            'matricule' => 'admin123',
+            'matricule' => strtoupper('admin123'),
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),

@@ -41,7 +41,7 @@ class StudentAccountController extends Controller
         $courses_id = array();
 
         foreach($request['codes'] as $code) {
-            $course_id = Course::where('code', $code['code'])->first()->id;
+            $course_id = Course::where('code', strtoupper($code['code']))->first()->id;
             array_push($courses_id, $course_id);
         }
 
@@ -80,7 +80,7 @@ class StudentAccountController extends Controller
                                         ['course_id', $course->id])
                                 ->first();
             $result = (object) [
-                'code' => $course->code,
+                'code' => strtoupper($course->code),
                 'ca_mark' => $course_student->ca_mark,
                 'exam_mark' => $course_student->exam_mark,
                 'grade' => $course_student->grade,

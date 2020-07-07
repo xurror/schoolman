@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         try {
             $user = new User;
-            $user->matricule = $request['matricule'];
+            $user->matricule = strtoupper($request['matricule']);
             $user->name = $request['name'];
             $user->email = $request['email'];
             $user->password = Hash::make($request['password']);
@@ -73,7 +73,7 @@ class AuthController extends Controller
                 $user = User::where('email', $request->input('username'))->first();
             }else {
                 $type = 'matricule';
-                $user = User::where('matricule', $request->input('username'))->first();
+                $user = User::where('matricule', strtoupper($request->input('username')))->first();
             }
 
             $request->merge([$type => $request->input('username')]);

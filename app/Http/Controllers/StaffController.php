@@ -28,7 +28,7 @@ class StaffController extends Controller
 
             $staff_details = (object) [
                 "id" => $staffm->id,
-                "matricule" => $staffm->matricule,
+                "matricule" => strtoupper($staffm->matricule),
                 "name" => $staffm->name,
                 "email" => $staffm->email,
                 "password" => $staffm->password,
@@ -72,7 +72,7 @@ class StaffController extends Controller
 
         try {
             $staff = new User();
-            $staff->matricule = $request['matricule'];
+            $staff->matricule = strtoupper($request['matricule']);
             $staff->name = $request['name'];
             $staff->email = $request['email'];
             $staff->password = Hash::make($request['password']);
@@ -97,7 +97,7 @@ class StaffController extends Controller
 
             $staff_details = (object) [
                 "id" => $staff->id,
-                "matricule" => $staff->matricule,
+                "matricule" => strtoupper($staff->matricule),
                 "name" => $staff->name,
                 "email" => $staff->email,
                 "password" => $staff->password,
@@ -137,7 +137,7 @@ class StaffController extends Controller
 
             $staff_details = (object) [
                 "id" => $staff->id,
-                "matricule" => $staff->matricule,
+                "matricule" => strtoupper($staff->matricule),
                 "name" => $staff->name,
                 "email" => $staff->email,
                 "password" => $staff->password,
@@ -181,7 +181,7 @@ class StaffController extends Controller
 
         try {
             $staff = User::findOrFail($id);
-            $staff->matricule = $request['matricule'];
+            $staff->matricule = strtoupper($request['matricule']);
             $staff->name = $request['name'];
             $staff->email = $request['email'];
             $staff->password = Hash::make($request['password']);
@@ -208,7 +208,7 @@ class StaffController extends Controller
 
             $staff_details = (object) [
                 "id" => $staff->id,
-                "matricule" => $staff->matricule,
+                "matricule" => strtoupper($staff->matricule),
                 "name" => $staff->name,
                 "email" => $staff->email,
                 "password" => $staff->password,

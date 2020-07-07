@@ -9,7 +9,6 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class StaffAccountController extends Controller
@@ -32,10 +31,8 @@ class StaffAccountController extends Controller
             foreach($course_students as $course_student) {
                 error_log($course_student->id);
                 $course_details = (object) [
-                    'matricule' => User::where(
-                                    'id', Student::where('id', $course_student->student_id)->first()->user_id
-                                )->first()->matricule,
-                    'code' => $course->code,
+                    'matricule' => User::where('id', Student::where('id', $course_student->student_id)->first()->user_id)->first()->matricule,
+                    'code' => strtoupper($course->code),
                     'ca_mark' => $course_student->ca_mark,
                     'exam_mark' => $course_student->exam_mark,
                     'grade' => $course_student->grade,
@@ -63,14 +60,14 @@ class StaffAccountController extends Controller
 
         foreach ($request['marks'] as $mark) {
             $students = User::join('students', 'users.id', '=', 'students.user_id')
-                            ->where('matricule', $mark['matricule'])->get();
-            $courses = Course::where('code', $mark['code'])->get();
+                            ->where('matricule', strtoupper($mark['matricule']))->get();
+            $courses = Course::where('code', strtoupper($mark['code']))->get();
 
             foreach ($students as $student) {
                 error_log($student->id);
                 error_log($student->user_id);
                 foreach ($courses as $course) {
-                    if ($student->matricule == $mark['matricule']) {
+                    if ($student->matricule == strtoupper($mark['matricule'])) {
                         error_log($course->id);
                         $course_student = CourseStudent::where([
                                                             ['student_id', $student->user_id],
