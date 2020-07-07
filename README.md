@@ -37,21 +37,21 @@ Authentication uses jwt. Use default logins below for admin, student and staff
 # 1. Login
 
     - ADMIN:
-    `POST /auth/login contentType: application/json body: {
+    `POST /api/auth/login contentType: application/json body: {
             "username":"admin123",
             "password":"password",
             "role":"admin"
         }`
     
     - STUDENT:
-    `POST /auth/login contentType: application/json body: {
+    `POST /api/auth/login contentType: application/json body: {
             "username":"student123",
             "password":"password",
             "role":"student"
         }`
 
     - STAFF
-    `POST /auth/login contentType: application/json body: {
+    `POST /api/auth/login contentType: application/json body: {
             "username":"staff123",
             "password":"password",
             "role":"staff"
