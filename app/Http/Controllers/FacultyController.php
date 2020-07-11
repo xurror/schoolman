@@ -31,10 +31,16 @@ class FacultyController extends Controller
             'name' => 'required|string|min:5',
         ]);
 
-        $faculty = Faculty::create([
-            'name' => $request['name'],
-        ]);
-        return response()->json(['Faculty' => $faculty, 'message' => 'Faculty Created'], 200);
+        try {
+            $faculty = Faculty::create([
+                'name' => $request['name'],
+            ]);
+            return response()->json(['Faculty' => $faculty, 'message' => 'Faculty Created'], 200);
+        } catch (Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'Staff update Failed!'], 409);
+        }
     }
 
     /**

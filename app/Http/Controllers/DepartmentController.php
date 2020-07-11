@@ -33,12 +33,18 @@ class DepartmentController extends Controller
             'faculty' => 'required',
         ]);
 
-        $department = Department::create([
-            'name' => $request['name'],
-            'faculty_id' => DB::table('faculties')->select('id')
-                            ->where('name', $request['faculty'])->first(),
-        ]);
-        return response()->json(['Department' => $department, 'message' => 'Department Created'], 200);
+        try {
+            $department = Department::create([
+                'name' => $request['name'],
+                'faculty_id' => DB::table('faculties')->select('id')
+                                ->where('name', $request['faculty'])->first(),
+            ]);
+            return response()->json(['Department' => $department, 'message' => 'Department Created'], 200);
+        } catch (\Exception $e) {
+
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
+        }
     }
 
     /**
@@ -76,7 +82,7 @@ class DepartmentController extends Controller
             return response()->json(['Department' => $department, 'message' => 'Department Updated'], 200);
         } catch(Exception $e) {
             error_log('An error occurred ' . $e);
-            return response()->json(['message' => 'An error Occurred'], 500);
+            return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }
     }
 
@@ -92,7 +98,7 @@ class DepartmentController extends Controller
             Department::findOrFail($id)->delete();
         } catch(Exception $e) {
             error_log('An error occurred ' . $e);
-            return response()->json(['message' => 'An error Occurred'], 500);
+            return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }
     }
 }

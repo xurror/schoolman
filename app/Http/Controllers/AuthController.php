@@ -89,7 +89,7 @@ class AuthController extends Controller
             }
         } catch (\Exception $e) {
             error_log('An error occured' . $e);
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'User not found', 'logs' => $e], 404);
         }
     }
 }

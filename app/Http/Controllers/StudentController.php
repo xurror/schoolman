@@ -19,31 +19,36 @@ class StudentController extends Controller {
      */
     public function all()
     {
-        $student_list = array();
-        $students =  DB::table('users')->where('role', 'student')->get();
+        try {
+            $student_list = array();
+            $students =  DB::table('users')->where('role', 'student')->get();
 
-        foreach($students as $student) {
-            $student_details = DB::table('students')->where('user_id', $student->id)->first();
-            $department = DB::table('departments')->where('id', $student_details->department_id)->first();
-            $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
+            foreach($students as $student) {
+                $student_details = DB::table('students')->where('user_id', $student->id)->first();
+                $department = DB::table('departments')->where('id', $student_details->department_id)->first();
+                $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
 
-            $student_details = (object) [
-                "id" => $student->id,
-                "matricule" => strtoupper($student->matricule),
-                "name" => $student->name,
-                "email" => $student->email,
-                "password" => $student->password,
-                "phone" => $student->phone,
-                "dob"  => $student->dob,
-                "gender" => $student->gender,
-                "marital_status" => $student->marital_status,
-                'department' => $department->name,
-                'faculty' => $faculty->name
-            ];
+                $student_details = (object) [
+                    "id" => $student->id,
+                    "matricule" => strtoupper($student->matricule),
+                    "name" => $student->name,
+                    "email" => $student->email,
+                    "password" => $student->password,
+                    "phone" => $student->phone,
+                    "dob"  => $student->dob,
+                    "gender" => $student->gender,
+                    "marital_status" => $student->marital_status,
+                    'department' => $department->name,
+                    'faculty' => $faculty->name
+                ];
 
-            array_push($student_list, $student_details);
+                array_push($student_list, $student_details);
+            }
+            return response()->json(['students' => $student_list, 'message' => 'All students and details'], 200);
+        } catch (\Exception $e) {
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }
-        return response()->json(['students' => $student_list, 'message' => 'All students and details'], 200);
     }
 
     /**
@@ -110,7 +115,7 @@ class StudentController extends Controller {
 
         } catch (Exception $e) {
             //return error message
-            return response()->json(['message' => 'Student Registration Failed!'], 409);
+            return response()->json(['message' => 'Student Registration Failed!', 'logs' => $e], 409);
         }
 
     }
@@ -214,7 +219,7 @@ class StudentController extends Controller {
         } catch (Exception $e) {
             //return error message
             error_log('An error occurred caused by ' . $e);
-            return response()->json(['message' => 'Student Update Failed!'], 409);
+            return response()->json(['message' => 'Student Update Failed!', 'logs' => $e], 409);
         }
     }
 

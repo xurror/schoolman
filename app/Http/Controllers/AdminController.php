@@ -43,7 +43,8 @@ class AdminController extends Controller {
 
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User update Failed!'], 409);
+            error_log('An error occured' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
     }
 }

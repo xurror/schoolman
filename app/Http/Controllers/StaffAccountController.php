@@ -25,22 +25,27 @@ class StaffAccountController extends Controller
         $courses = $staff->courses;
         $my_courses = array();
 
-        foreach($courses as $course) {
-            error_log($course->id);
-            $course_students = CourseStudent::where('course_id', $course->id)->get();
-            foreach($course_students as $course_student) {
-                error_log($course_student->id);
-                $course_details = (object) [
-                    'matricule' => User::where('id', Student::where('id', $course_student->student_id)->first()->user_id)->first()->matricule,
-                    'code' => strtoupper($course->code),
-                    'ca_mark' => $course_student->ca_mark,
-                    'exam_mark' => $course_student->exam_mark,
-                    'grade' => $course_student->grade,
-                ];
-                array_push($my_courses, $course_details);
+        try {
+            foreach($courses as $course) {
+                error_log($course->id);
+                $course_students = CourseStudent::where('course_id', $course->id)->get();
+                foreach($course_students as $course_student) {
+                    error_log($course_student->id);
+                    $course_details = (object) [
+                        'matricule' => User::where('id', Student::where('id', $course_student->student_id)->first()->user_id)->first()->matricule,
+                        'code' => strtoupper($course->code),
+                        'ca_mark' => $course_student->ca_mark,
+                        'exam_mark' => $course_student->exam_mark,
+                        'grade' => $course_student->grade,
+                    ];
+                    array_push($my_courses, $course_details);
+                }
             }
+            return $my_courses;
+        } catch (\Exception $e) {
+            error_log('An error occurred caused by \n' . $e);
+            return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }
-        return $my_courses;
 
     }
 
@@ -56,38 +61,42 @@ class StaffAccountController extends Controller
             'marks' => 'required',
         ]);
 
+        try {
+            foreach ($request['marks'] as $mark) {
+                $students = User::join('students', 'users.id', '=', 'students.user_id')
+                                ->where('matricule', strtoupper($mark['matricule']))->get();
+                $courses = Course::where('code', strtoupper($mark['code']))->get();
 
-
-        foreach ($request['marks'] as $mark) {
-            $students = User::join('students', 'users.id', '=', 'students.user_id')
-                            ->where('matricule', strtoupper($mark['matricule']))->get();
-            $courses = Course::where('code', strtoupper($mark['code']))->get();
-
-            foreach ($students as $student) {
-                error_log($student->id);
-                error_log($student->user_id);
-                foreach ($courses as $course) {
-                    if ($student->matricule == strtoupper($mark['matricule'])) {
-                        error_log($course->id);
-                        $course_student = CourseStudent::where([
-                                                            ['student_id', $student->user_id],
-                                                            ['course_id', $course->id]
-                                                        ])->first();
-                        if ($course_student == null)
-                            break;
-                        $course_student->ca_mark = $mark['ca_mark'];
-                        $course_student->exam_mark = $mark['exam_mark'];
-                        $course_student->grade = $mark['grade'];
-                        $course_student->save();
+                foreach ($students as $student) {
+                    error_log($student->id);
+                    error_log($student->user_id);
+                    foreach ($courses as $course) {
+                        if ($student->matricule == strtoupper($mark['matricule'])) {
+                            error_log($course->id);
+                            $course_student = CourseStudent::where([
+                                                                ['student_id', $student->user_id],
+                                                                ['course_id', $course->id]
+                                                            ])->first();
+                            if ($course_student == null)
+                                break;
+                            $course_student->ca_mark = $mark['ca_mark'];
+                            $course_student->exam_mark = $mark['exam_mark'];
+                            $course_student->grade = $mark['grade'];
+                            $course_student->save();
+                        }
                     }
                 }
             }
-        }
 
-        foreach($students as $student) {
+            foreach($students as $student) {
 
+            }
+            return response()->json(['message' => 'Successfully registered marks'], 200);
+        } catch (\Exception $e) {
+
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }
-        return response()->json(['message' => 'Successfully registered marks'], 200);
     }
 
     public function update(Request $request, $id)
@@ -113,7 +122,7 @@ class StaffAccountController extends Controller
         } catch (\Exception $e) {
             //return error message
             error_log('An error occurred caused by ' . $e);
-            return response()->json(['message' => 'Staff update Failed!'], 409);
+            return response()->json(['message' => 'Staff update Failed!', 'logs' => $e], 409);
         }
     }
 }

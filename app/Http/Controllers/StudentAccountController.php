@@ -76,8 +76,8 @@ class StudentAccountController extends Controller
 
         foreach($courses as $course) {
             $course_student = DB::table('course_student')
-                                ->where(['student_id', $student->id],
-                                        ['course_id', $course->id])
+                                ->where('student_id', $student->id)
+                                ->where('course_id', $course->id)
                                 ->first();
             $result = (object) [
                 'code' => strtoupper($course->code),

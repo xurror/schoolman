@@ -18,33 +18,39 @@ class StaffController extends Controller
      */
     public function all()
     {
-        $staff_list = array();
-        $staff =  DB::table('users')->where('role', 'staff')->get();
+        try{
+            $staff_list = array();
+            $staff =  DB::table('users')->where('role', 'staff')->get();
 
-        foreach($staff as $staffm) {
-            $staff_extras = DB::table('staff')->where('user_id', $staffm->id)->first();
-            $department = DB::table('departments')->where('id', $staff_extras->department_id)->first();
-            $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
+            foreach($staff as $staffm) {
+                $staff_extras = DB::table('staff')->where('user_id', $staffm->id)->first();
+                $department = DB::table('departments')->where('id', $staff_extras->department_id)->first();
+                $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
 
-            $staff_details = (object) [
-                "id" => $staffm->id,
-                "matricule" => strtoupper($staffm->matricule),
-                "name" => $staffm->name,
-                "email" => $staffm->email,
-                "password" => $staffm->password,
-                "phone" => $staffm->phone,
-                "dob"  => $staffm->dob,
-                "gender" => $staffm->gender,
-                "marital_status" => $staffm->marital_status,
-                "nature_of_job" => $staff_extras->nature_of_job,
-                "basic_pay" => $staff_extras->basic_pay,
-                'department' => $department->name,
-                'faculty' => $faculty->name
-            ];
+                $staff_details = (object) [
+                    "id" => $staffm->id,
+                    "matricule" => strtoupper($staffm->matricule),
+                    "name" => $staffm->name,
+                    "email" => $staffm->email,
+                    "password" => $staffm->password,
+                    "phone" => $staffm->phone,
+                    "dob"  => $staffm->dob,
+                    "gender" => $staffm->gender,
+                    "marital_status" => $staffm->marital_status,
+                    "nature_of_job" => $staff_extras->nature_of_job,
+                    "basic_pay" => $staff_extras->basic_pay,
+                    'department' => $department->name,
+                    'faculty' => $faculty->name
+                ];
 
-            array_push($staff_list, $staff_details);
+                array_push($staff_list, $staff_details);
+            }
+            return response()->json(['staff' => $staff_list, 'message' => 'All staff and details'], 200);
+        } catch (Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'Staff update Failed!'], 409);
         }
-        return response()->json(['staff' => $staff_list, 'message' => 'All staff and details'], 200);
 
     }
 
@@ -116,6 +122,7 @@ class StaffController extends Controller
 
         } catch (Exception $e) {
             //return error message
+            error_log('An error occured' . $e);
             return response()->json(['message' => 'Staff Registration Failed!'], 409);
         }
 
@@ -150,6 +157,8 @@ class StaffController extends Controller
                 'department' => $department->name,
                 'faculty' => $faculty->name
             ];
+            return response()->json(['user' => $staff_details, 'message' => 'staff details'], 200);
+
         } catch(Exception $e) {
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'An error occurred caused by ' . $e], 500);
