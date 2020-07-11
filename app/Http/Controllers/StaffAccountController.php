@@ -63,37 +63,20 @@ class StaffAccountController extends Controller
 
         try {
             foreach ($request['marks'] as $mark) {
-                $students = User::join('students', 'users.id', '=', 'students.user_id')
-                                ->where('matricule', strtoupper($mark['matricule']))->get();
-                $courses = Course::where('code', strtoupper($mark['code']))->get();
+                $user = User::where('matricule', strtoupper($mark['matricule']))->first();
+                $student = Student::where('user_id', $user->id)->first();
+                $course = Course::where('code', strtoupper($mark['code']))->first();
 
-                foreach ($students as $student) {
-                    error_log($student->id);
-                    error_log($student->user_id);
-                    foreach ($courses as $course) {
-                        if ($student->matricule == strtoupper($mark['matricule'])) {
-                            error_log($course->id);
-                            $course_student = CourseStudent::where([
-                                                                ['student_id', $student->user_id],
-                                                                ['course_id', $course->id]
-                                                            ])->first();
-                            if ($course_student == null)
-                                break;
-                            $course_student->ca_mark = $mark['ca_mark'];
-                            $course_student->exam_mark = $mark['exam_mark'];
-                            $course_student->grade = $mark['grade'];
-                            $course_student->save();
-                        }
-                    }
-                }
-            }
-
-            foreach($students as $student) {
-
+                $course_student = CourseStudent::where('student_id', $student->id)
+                                                ->where('course_id', $course->id)
+                                                ->first();
+                $course_student->ca_mark = $mark['ca_mark'];
+                $course_student->exam_mark = $mark['exam_mark'];
+                $course_student->grade = $mark['grade'];
+                $course_student->save();
             }
             return response()->json(['message' => 'Successfully registered marks'], 200);
         } catch (\Exception $e) {
-
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }

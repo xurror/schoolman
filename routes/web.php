@@ -27,51 +27,51 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
         // Student Actions from Student Account
         $router->group(['prefix' => 'account/student', 'middleware' => 'is_student'], function () use ($router) {
-            $router->put('/', 'StudentAccountController@update');
-            $router->get('/courses', 'StudentAccountController@getRegisteredCourses');
-            $router->get('/results', 'StudentAccountController@getResults');
-            $router->get('/fees', 'StudentAccountController@getFees');
-            $router->post('/courses', 'StudentAccountController@registerCourses');
+            $router->put('/', 'StudentAccountController@update'); // Update profile
+            $router->get('/courses', 'StudentAccountController@getRegisteredCourses'); // Get all registered courses
+            $router->get('/results', 'StudentAccountController@getResults'); // Get All results
+            $router->get('/fees', 'StudentAccountController@getFees'); // Get fees
+            $router->post('/courses', 'StudentAccountController@registerCourses'); // Register courses.
         });
 
         // Staff actions from Staff account
         $router->group(['prefix' => 'account/staff', 'middleware' => 'is_staff'], function () use ($router) {
-            $router->put('/', 'StaffAccountController@update');
-            $router->get('/courses', 'StaffAccountController@getCourses');
-            $router->post('/marks', 'StaffAccountController@registerMarks');
+            $router->put('/', 'StaffAccountController@update'); // Update profile
+            $router->get('/courses', 'StaffAccountController@getCourses'); // Get staff courses and students
+            $router->post('/marks', 'StaffAccountController@registerMarks'); // record marks
         });
 
         $router->group(['prefix' => 'admin', 'middleware' => 'is_admin'], function () use ($router) {
             // Account Management(Update profile)
-            $router->put('/', 'AdminController@update');
+            $router->put('/', 'AdminController@update'); // Update profile
 
             // Students Management
             $router->get('/student', ['uses' => 'StudentController@all']); // Get All students
             $router->post('/student', ['uses' => 'StudentController@create']); // Create a new student
-            $router->get('/student/{id}', ['uses' => 'StudentController@show']);
-            $router->put('/student/{id}', ['uses' => 'StudentController@update']);
-            $router->delete('/student/{id}', ['uses' => 'StudentController@destroy']);
+            $router->get('/student/{id}', ['uses' => 'StudentController@show']); // Get a single student
+            $router->put('/student/{id}', ['uses' => 'StudentController@update']); // Update a student
+            $router->delete('/student/{id}', ['uses' => 'StudentController@destroy']); // Delete a student.
 
             // Staff Management
             $router->get('/staff', ['uses' => 'StaffController@all']); // Get All staff
             $router->post('/staff', ['uses' => 'StaffController@create']); // Create a new staff
-            $router->get('/staff/{id}', ['uses' => 'StaffController@show']);
-            $router->put('/staff/{id}', ['uses' => 'StaffController@update']);
-            $router->delete('/staff/{id}', ['uses' => 'StaffController@destroy']);
+            $router->get('/staff/{id}', ['uses' => 'StaffController@show']); // Get a single staff
+            $router->put('/staff/{id}', ['uses' => 'StaffController@update']); // Update staff member
+            $router->delete('/staff/{id}', ['uses' => 'StaffController@destroy']); // Delete staff member
 
             // Faculty Management
             $router->get('/faculty', ['uses' => 'FacultyController@all']); // Get All staff
             $router->post('/faculty', ['uses' => 'FacultyController@create']); // Create a new staff
-            $router->get('/faculty/{id}', ['uses' => 'FacultyController@show']);
-            $router->put('/faculty/{id}', ['uses' => 'FacultyController@update']);
-            $router->delete('/faculty/{id}', ['uses' => 'FacultyController@destroy']);
+            $router->get('/faculty/{id}', ['uses' => 'FacultyController@show']); // Get a single faculty
+            $router->put('/faculty/{id}', ['uses' => 'FacultyController@update']); // Update a faculty
+            $router->delete('/faculty/{id}', ['uses' => 'FacultyController@destroy']); // Delete a faculty
 
             // Department Management
-            $router->get('/department', ['uses' => 'DepartmentController@all']); // Get All staff
-            $router->post('/department', ['uses' => 'DepartmentController@create']); // Create a new staff
-            $router->get('/department/{id}', ['uses' => 'DepartmentController@show']);
-            $router->put('/department/{id}', ['uses' => 'DepartmentController@update']);
-            $router->delete('/department/{id}', ['uses' => 'DepartmentController@destroy']);
+            $router->get('/department', ['uses' => 'DepartmentController@all']); // Get All Department
+            $router->post('/department', ['uses' => 'DepartmentController@create']); // Create a new Department
+            $router->get('/department/{id}', ['uses' => 'DepartmentController@show']); // Get a single department
+            $router->put('/department/{id}', ['uses' => 'DepartmentController@update']); // Update a department
+            $router->delete('/department/{id}', ['uses' => 'DepartmentController@destroy']); // Delete a department
         });
 
     });
