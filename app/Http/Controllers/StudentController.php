@@ -231,6 +231,12 @@ class StudentController extends Controller {
      */
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
+        try {
+            User::findOrFail($id)->delete();
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
+        }
     }
 }

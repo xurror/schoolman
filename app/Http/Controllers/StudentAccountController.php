@@ -18,10 +18,16 @@ class StudentAccountController extends Controller
      */
     public function getRegisteredCourses()
     {
-        $user = Auth::user();
-        $student = Student::where('user_id', $user->id)->first();
-        $courses = $student->courses;
-        return $courses;
+        try {
+            $user = Auth::user();
+            $student = Student::where('user_id', $user->id)->first();
+            $courses = $student->courses;
+            return $courses;
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
+        }
     }
 
     /**
@@ -32,21 +38,27 @@ class StudentAccountController extends Controller
      */
     public function registerCourses(Request $request)
     {
-        $user = Auth::user();
-        $student = Student::where('user_id', $user->id)->first();
-        $this->validate($request, [
-            'codes' => 'required',
-        ]);
+        try {
+            $user = Auth::user();
+            $student = Student::where('user_id', $user->id)->first();
+            $this->validate($request, [
+                'codes' => 'required',
+            ]);
 
-        $courses_id = array();
+            $courses_id = array();
 
-        foreach($request['codes'] as $code) {
-            $course_id = Course::where('code', strtoupper($code['code']))->first()->id;
-            array_push($courses_id, $course_id);
+            foreach($request['codes'] as $code) {
+                $course_id = Course::where('code', strtoupper($code['code']))->first()->id;
+                array_push($courses_id, $course_id);
+            }
+
+            $student->courses->sync($courses_id);
+            return response()->json(['message' => 'Courses successfully registered'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
-
-        $student->courses->sync($courses_id);
-        return response()->json(['message' => 'Courses successfully registered'], 200);
     }
 
     /**
@@ -56,10 +68,16 @@ class StudentAccountController extends Controller
      */
     public function getFees()
     {
-        $user = Auth::user();
-        $student = Student::where('user_id', $user->id)->first();
-        $fees = $student->fees;
-        return $fees;
+        try {
+            $user = Auth::user();
+            $student = Student::where('user_id', $user->id)->first();
+            $fees = $student->fees;
+            return $fees;
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
+        }
     }
 
     /**
@@ -69,25 +87,31 @@ class StudentAccountController extends Controller
      */
     public function getResults()
     {
-        $user = Auth::user();
-        $student = Student::where('user_id', $user->id)->first();
-        $courses = $student->courses;
-        $results = array();
+        try {
+            $user = Auth::user();
+            $student = Student::where('user_id', $user->id)->first();
+            $courses = $student->courses;
+            $results = array();
 
-        foreach($courses as $course) {
-            $course_student = DB::table('course_student')
-                                ->where('student_id', $student->id)
-                                ->where('course_id', $course->id)
-                                ->first();
-            $result = (object) [
-                'code' => strtoupper($course->code),
-                'ca_mark' => $course_student->ca_mark,
-                'exam_mark' => $course_student->exam_mark,
-                'grade' => $course_student->grade,
-            ];
-            array_push($results, $result);
+            foreach($courses as $course) {
+                $course_student = DB::table('course_student')
+                                    ->where('student_id', $student->id)
+                                    ->where('course_id', $course->id)
+                                    ->first();
+                $result = (object) [
+                    'code' => strtoupper($course->code),
+                    'ca_mark' => $course_student->ca_mark,
+                    'exam_mark' => $course_student->exam_mark,
+                    'grade' => $course_student->grade,
+                ];
+                array_push($results, $result);
+            }
+            return response()->json(['Results' => $results, 'message' => 'Student results'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
-        return response()->json(['Results' => $results, 'message' => 'Student results'], 200);
     }
 
     /**
@@ -116,10 +140,10 @@ class StudentAccountController extends Controller
 
             //return successful response
             return response()->json(['user' => $user, 'message' => 'User updated'], 200);
-
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'User update Failed!'], 409);
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
     }
 }

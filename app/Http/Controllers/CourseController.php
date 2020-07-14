@@ -17,16 +17,22 @@ class CourseController extends Controller
      */
     public function all()
     {
-        $courses_list = Course::join('departments', 'courses.department_id', '=', 'departments.id')
-                        ->join('staff', 'courses.staff_id', '=', 'staff.id')
-                        ->select('courses.id', 'courses.code', 'courses.title', 'courses.credits', 'staff.user_id as matricule', 'departments.name as department_name')
-                        ->get();
-        $courses = array();
-        foreach ($courses_list as $course) {
-            $course->matricule = User::where('id', $course->matricule)->first()->matricule;
-            array_push($courses, $course);
+        try {
+            $courses_list = Course::join('departments', 'courses.department_id', '=', 'departments.id')
+                            ->join('staff', 'courses.staff_id', '=', 'staff.id')
+                            ->select('courses.id', 'courses.code', 'courses.title', 'courses.credits', 'staff.user_id as matricule', 'departments.name as department_name')
+                            ->get();
+            $courses = array();
+            foreach ($courses_list as $course) {
+                $course->matricule = User::where('id', $course->matricule)->first()->matricule;
+                array_push($courses, $course);
+            }
+            return response()->json(['Courses' => $courses], 200);
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
-        return response()->json(['Courses' => $courses], 200);
     }
 
     /**

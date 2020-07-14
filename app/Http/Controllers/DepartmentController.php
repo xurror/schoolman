@@ -17,10 +17,16 @@ class DepartmentController extends Controller
      */
     public function all()
     {
-        $departments = Department::join('faculties', 'departments.faculty_id', '=', 'faculties.id')
-                                    ->select('departments.id', 'departments.name', 'faculties.name as faculty_name')
-                                    ->get();
-        return response()->json(['Departments' => $departments], 200);
+        try {
+            $departments = Department::join('faculties', 'departments.faculty_id', '=', 'faculties.id')
+                                        ->select('departments.id', 'departments.name', 'faculties.name as faculty_name')
+                                        ->get();
+            return response()->json(['Departments' => $departments], 200);
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
+        }
     }
 
     /**

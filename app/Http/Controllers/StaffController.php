@@ -49,7 +49,7 @@ class StaffController extends Controller
         } catch (Exception $e) {
             //return error message
             error_log('An error occurred caused by ' . $e);
-            return response()->json(['message' => 'Staff update Failed!'], 409);
+            return response()->json(['message' => 'Staff update Failed!', 'logs' => $e], 409);
         }
 
     }
@@ -123,7 +123,7 @@ class StaffController extends Controller
         } catch (Exception $e) {
             //return error message
             error_log('An error occured' . $e);
-            return response()->json(['message' => 'Staff Registration Failed!'], 409);
+            return response()->json(['message' => 'Staff Registration Failed!', 'logs' => $e], 409);
         }
 
     }
@@ -161,7 +161,7 @@ class StaffController extends Controller
 
         } catch(Exception $e) {
             error_log('An error occurred caused by ' . $e);
-            return response()->json(['message' => 'An error occurred caused by ' . $e], 500);
+            return response()->json(['message' => 'An error occurred', 'logs' => $e], 500);
         }
     }
 
@@ -237,7 +237,7 @@ class StaffController extends Controller
         } catch (Exception $e) {
             //return error message
             error_log('An error occurred caused by ' . $e);
-            return response()->json(['message' => 'Staff update Failed!'], 409);
+            return response()->json(['message' => 'Staff update Failed!', 'logs' => $e], 409);
         }
     }
 
