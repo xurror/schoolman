@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\Faculty;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,9 @@ class DepartmentController extends Controller
      */
     public function all()
     {
-        $departments = Department::with('faculties');
+        $departments = Department::join('faculties', 'departments.faculty_id', '=', 'faculties.id')
+                                    ->select('departments.id', 'departments.name', 'faculties.name as faculty_name')
+                                    ->get();
         return response()->json(['Departments' => $departments], 200);
     }
 
@@ -30,15 +33,15 @@ class DepartmentController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|min:5',
-            'faculty' => 'required',
+            'faculty_id' => 'required',
         ]);
 
         try {
-            $department = Department::create([
-                'name' => $request['name'],
-                'faculty_id' => DB::table('faculties')->select('id')
-                                ->where('name', $request['faculty'])->first(),
-            ]);
+            $department = new Department();
+            $department->faculty_id = $request['faculty_id'];
+            $department->name = $request['name'];
+            $department->save();
+
             return response()->json(['Department' => $department, 'message' => 'Department Created'], 200);
         } catch (\Exception $e) {
 
@@ -55,8 +58,20 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        $department = Department::findOrFail($id)->with('faculty')->get();
-        return response()->json(['Department' => $department], 200);
+        try {
+            $department = Department::join('faculties', 'departments.faculty_id', '=', 'faculties.id')
+                                        ->select('departments.id', 'departments.name', 'faculties.name as faculty_name')
+                                        ->where('departments.id', $id)
+                                        ->first();
+            if ($department == null) {
+                return response()->json(['message' => 'Resource not found'], 404);
+            } else {
+                return response()->json(['Department' => $department], 200);
+            }
+        } catch(Exception $e) {
+            error_log('An error occurred ' . $e);
+            return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
+        }
     }
 
     /**
@@ -72,12 +87,11 @@ class DepartmentController extends Controller
             $department = Department::findOrFail($id);
             $this->validate($request, [
                 'name' => 'required|string|min:5',
-                'faculty' => 'required',
+                'faculty_id' => 'required',
             ]);
 
             $department->name = $request['name'];
-            $department->faculty_id = DB::table('faculties')->select('id')
-                                ->where('name', $request['faculty'])->first();
+            $department->faculty_id =$request['faculty_id'];
             $department->save();
             return response()->json(['Department' => $department, 'message' => 'Department Updated'], 200);
         } catch(Exception $e) {
