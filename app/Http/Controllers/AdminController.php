@@ -18,13 +18,12 @@ class AdminController extends Controller {
     public function update(Request $request)
     {
         $this->validate($request, [
-            'matricule' => 'required|string|min:5|max:15',
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'dob' => 'required|date',
-            'marital_status' => 'required',
+            'matricule' => 'string|min:5|max:15',
+            'name' => 'string|max:255',
+            'email' => 'string|email|max:255',
+            'password' => 'string|min:8',
+            'phone' => 'string|min:9|max:12',
+            'dob' => 'date',
         ]);
 
         try {

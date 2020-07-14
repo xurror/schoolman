@@ -29,17 +29,14 @@ class StaffAccountController extends Controller
             foreach($courses as $course) {
                 error_log($course->id);
                 $course_students = CourseStudent::where('course_id', $course->id)->get();
-                foreach($course_students as $course_student) {
-                    error_log($course_student->id);
-                    $course_details = (object) [
-                        'matricule' => User::where('id', Student::where('id', $course_student->student_id)->first()->user_id)->first()->matricule,
-                        'code' => strtoupper($course->code),
-                        'ca_mark' => $course_student->ca_mark,
-                        'exam_mark' => $course_student->exam_mark,
-                        'grade' => $course_student->grade,
-                    ];
-                    array_push($my_courses, $course_details);
-                }
+                // error_log($course_students->id);
+                $course_details = (object) [
+                    'students' => $course_students,
+                    'code' => strtoupper($course->code),
+                    'title' => $course->title,
+                    'credits' => $course->credits,
+                ];
+                array_push($my_courses, $course_details);
             }
             return $my_courses;
         } catch (\Exception $e) {
@@ -82,17 +79,16 @@ class StaffAccountController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => 'string|email|max:255',
+            'password' => 'string|min:8',
             'phone' => 'required|string|min:9|max:12',
-            'marital_status' => 'required',
         ]);
 
         try {
-            $staff = User::findOrFail($id);
+            $staff = $request->user();
             $staff->email = $request['email'];
             $staff->password = Hash::make($request['password']);
             $staff->phone = $request['phone'];

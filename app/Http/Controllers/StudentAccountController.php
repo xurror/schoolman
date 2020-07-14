@@ -121,13 +121,12 @@ class StudentAccountController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone' => 'required|string|min:9|max:12',
-            'marital_status' => 'required',
+            'email' => 'string|email|max:255',
+            'password' => 'string|min:8',
+            'phone' => 'string|min:9|max:12',
         ]);
 
         try {
