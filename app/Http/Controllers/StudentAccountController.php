@@ -99,6 +99,7 @@ class StudentAccountController extends Controller
                                     ->where('course_id', $course->id)
                                     ->first();
                 $result = (object) [
+                    'course_id' => $course->id,
                     'code' => strtoupper($course->code),
                     'ca_mark' => $course_student->ca_mark,
                     'exam_mark' => $course_student->exam_mark,

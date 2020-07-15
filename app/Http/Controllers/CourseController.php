@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
-use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -19,9 +17,9 @@ class CourseController extends Controller
     {
         try {
             $courses_list = Course::join('departments', 'courses.department_id', '=', 'departments.id')
-                            ->join('staff', 'courses.staff_id', '=', 'staff.id')
-                            ->select('courses.id', 'courses.code', 'courses.title', 'courses.credits', 'staff.user_id as matricule', 'departments.name as department_name')
-                            ->get();
+                                ->join('staff', 'courses.staff_id', '=', 'staff.id')
+                                ->select('courses.id', 'courses.code', 'courses.title', 'courses.credits', 'staff.id as staff_id', 'staff.user_id as matricule', 'departments.id as department_id', 'departments.name as department_name')
+                                ->get();
             $courses = array();
             foreach ($courses_list as $course) {
                 $course->matricule = User::where('id', $course->matricule)->first()->matricule;
@@ -79,7 +77,7 @@ class CourseController extends Controller
         try {
             $course = Course::join('departments', 'courses.department_id', '=', 'departments.id')
                             ->join('staff', 'courses.staff_id', '=', 'staff.id')
-                            ->select('courses.id', 'courses.code', 'courses.title', 'courses.credits', 'staff.user_id as matricule', 'departments.name as department_name')
+                            ->select('courses.id', 'courses.code', 'courses.title', 'courses.credits', 'staff.id as staff_id', 'staff.user_id as matricule', 'departments.id as department_id', 'departments.name as department_name')
                             ->where('courses.id', $id)
                             ->first();
 
@@ -137,6 +135,7 @@ class CourseController extends Controller
     {
         try {
             Course::findOrFail($id)->delete();
+            return response()->json(['message' => 'Successfully deleted'], 200);
         } catch(\Exception $e) {
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);

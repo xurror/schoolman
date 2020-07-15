@@ -71,7 +71,7 @@ class StaffController extends Controller
             'dob' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
-            'department' => 'required',
+            'department_id' => 'required',
             'nature_of_job' => 'required|string|max:255',
             'basic_pay' => 'required|string|max:255',
         ]);
@@ -89,11 +89,9 @@ class StaffController extends Controller
             $staff->role = "staff";
             $staff->save();
 
-            $department_id = DB::table('departments')->select('id')
-                                ->where('name', $request['department'])->first();
-
             $staff_extras = new Staff([
-                'department_id' => $department_id,
+                'user_id' => $staff->id,
+                'department_id' => $request['department_id'],
                 'nature_of_job' => $request['nature_of_job'],
                 'basic_pay' => $request['basic_pay'],
             ]);
@@ -249,6 +247,13 @@ class StaffController extends Controller
      */
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
+        try {
+            Staff::findOrFail($id)->delete();
+            return response()->json(['message' => 'Successfully deleted'], 200);
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
+        }
     }
 }

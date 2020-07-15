@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use App\Models\Faculty;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -19,8 +17,8 @@ class DepartmentController extends Controller
     {
         try {
             $departments = Department::join('faculties', 'departments.faculty_id', '=', 'faculties.id')
-                                        ->select('departments.id', 'departments.name', 'faculties.name as faculty_name')
-                                        ->get();
+                                    ->select('departments.id', 'departments.name', 'faculties.id as faculty_id', 'faculties.name as faculty_name')
+                                    ->get();
             return response()->json(['Departments' => $departments], 200);
         } catch (\Exception $e) {
             //return error message
@@ -66,9 +64,9 @@ class DepartmentController extends Controller
     {
         try {
             $department = Department::join('faculties', 'departments.faculty_id', '=', 'faculties.id')
-                                        ->select('departments.id', 'departments.name', 'faculties.name as faculty_name')
-                                        ->where('departments.id', $id)
-                                        ->first();
+                                    ->select('departments.id', 'departments.name', 'faculties.id as faculty_id', 'faculties.name as faculty_name')
+                                    ->where('departments.id', $id)
+                                    ->first();
             if ($department == null) {
                 return response()->json(['message' => 'Resource not found'], 404);
             } else {
@@ -116,6 +114,7 @@ class DepartmentController extends Controller
     {
         try {
             Department::findOrFail($id)->delete();
+            return response()->json(['message' => 'Successfully deleted'], 200);
         } catch(Exception $e) {
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);

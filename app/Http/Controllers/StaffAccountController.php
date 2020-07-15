@@ -32,6 +32,7 @@ class StaffAccountController extends Controller
                 // error_log($course_students->id);
                 $course_details = (object) [
                     'students' => $course_students,
+                    'course_id' => $course->id,
                     'code' => strtoupper($course->code),
                     'title' => $course->title,
                     'credits' => $course->credits,

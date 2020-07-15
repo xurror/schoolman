@@ -93,6 +93,7 @@ class FacultyController extends Controller
     {
         try {
             Faculty::findOrFail($id)->delete();
+            return response()->json(['message' => 'Successfully deleted'], 200);
         } catch(Exception $e) {
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred'], 500);

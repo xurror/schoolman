@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
+use App\Models\Faculty;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\User;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller {
@@ -21,23 +22,24 @@ class StudentController extends Controller {
     {
         try {
             $student_list = array();
-            $students =  DB::table('users')->where('role', 'student')->get();
+            $users =  User::where('role', 'student')->get();
 
-            foreach($students as $student) {
-                $student_details = DB::table('students')->where('user_id', $student->id)->first();
-                $department = DB::table('departments')->where('id', $student_details->department_id)->first();
-                $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
+            foreach($users as $user) {
+                $student_details = Student::where('user_id', $user->id)->first();
+                $department = Department::where('id', $student_details->department_id)->first();
+                $faculty = Faculty::where('id', $department->faculty_id)->first();
 
                 $student_details = (object) [
-                    "id" => $student->id,
-                    "matricule" => strtoupper($student->matricule),
-                    "name" => $student->name,
-                    "email" => $student->email,
-                    "password" => $student->password,
-                    "phone" => $student->phone,
-                    "dob"  => $student->dob,
-                    "gender" => $student->gender,
-                    "marital_status" => $student->marital_status,
+                    "id" => $user->id,
+                    "matricule" => strtoupper($user->matricule),
+                    "name" => $user->name,
+                    "email" => $user->email,
+                    "password" => $user->password,
+                    "phone" => $user->phone,
+                    "dob"  => $user->dob,
+                    "gender" => $user->gender,
+                    "marital_status" => $user->marital_status,
+                    'department_id' => $department->id,
                     'department' => $department->name,
                     'faculty' => $faculty->name
                 ];
@@ -68,44 +70,39 @@ class StudentController extends Controller {
             'dob' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
-            'department' => 'required',
+            'department_id' => 'required',
         ]);
 
         try {
-            $student = new User();
-            $student->matricule = strtoupper($request['matricule']);
-            $student->name = $request['name'];
-            $student->email = $request['email'];
-            $student->password = Hash::make($request['password']);
-            $student->phone = $request['phone'];
-            $student->dob = $request['dob'];
-            $student->gender = $request['gender'];
-            $student->marital_status = $request['marital_status'];
-            $student->role = "student";
-            $student->save();
+            $user = new User();
+            $user->matricule = strtoupper($request['matricule']);
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->password = Hash::make($request['password']);
+            $user->phone = $request['phone'];
+            $user->dob = $request['dob'];
+            $user->gender = $request['gender'];
+            $user->marital_status = $request['marital_status'];
+            $user->role = "student";
+            $user->save();
 
-            $department_id = DB::table('departments')->select('id')
-                                ->where('name', $request['department'])->first();
+            $student = new Student(['department_id' => $request['department_id']]);
+            $user->student()->save($student);
 
-            $student_details = new Student([
-                'department_id' => $department_id,
-            ]);
-
-            $student->student()->save($student_details);
-
-            $department = DB::table('departments')->where('id', $student_details->department_id)->first();
-            $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
+            $department = Department::where('id', $student->department_id)->first();
+            $faculty = Faculty::where('id', $department->faculty_id)->first();
 
             $student_details = (object) [
-                "id" => $student->id,
-                "matricule" => strtoupper($student->matricule),
-                "name" => $student->name,
-                "email" => $student->email,
-                "password" => $student->password,
-                "phone" => $student->phone,
-                "dob"  => $student->dob,
-                "gender" => $student->gender,
-                "marital_status" => $student->marital_status,
+                "id" => $user->id,
+                "matricule" => strtoupper($user->matricule),
+                "name" => $user->name,
+                "email" => $user->email,
+                "password" => $user->password,
+                "phone" => $user->phone,
+                "dob"  => $user->dob,
+                "gender" => $user->gender,
+                "marital_status" => $user->marital_status,
+                'department_id' => $department->id,
                 'department' => $department->name,
                 'faculty' => $faculty->name
             ];
@@ -115,6 +112,7 @@ class StudentController extends Controller {
 
         } catch (Exception $e) {
             //return error message
+            error_log($e);
             return response()->json(['message' => 'Student Registration Failed!', 'logs' => $e], 409);
         }
 
@@ -129,21 +127,22 @@ class StudentController extends Controller {
     public function show($id)
     {
         try {
-            $student = User::findOrFail($id);
-            $student_details = DB::table('students')->where('user_id', $student->id)->first();
-            $department = DB::table('departments')->where('id', $student_details->department_id)->first();
-            $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
+            $user = User::findOrFail($id);
+            $student = Student::where('user_id', $user->id)->first();
+            $department = Department::where('id', $student->department_id)->first();
+            $faculty = Faculty::here('id', $department->faculty_id)->first();
 
             $student_details = (object) [
-                "id" => $student->id,
-                "matricule" => strtoupper($student->matricule),
-                "name" => $student->name,
-                "email" => $student->email,
-                "password" => $student->password,
-                "phone" => $student->phone,
-                "dob"  => $student->dob,
-                "gender" => $student->gender,
-                "marital_status" => $student->marital_status,
+                "id" => $user->id,
+                "matricule" => strtoupper($user->matricule),
+                "name" => $user->name,
+                "email" => $user->email,
+                "password" => $user->password,
+                "phone" => $user->phone,
+                "dob"  => $user->dob,
+                "gender" => $user->gender,
+                "marital_status" => $user->marital_status,
+                'department_id' => $department->id,
                 'department' => $department->name,
                 'faculty' => $faculty->name
             ];
@@ -172,43 +171,40 @@ class StudentController extends Controller {
             'dob' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
-            'department' => 'required',
+            'department_id' => 'required',
         ]);
 
         try {
-            $student = User::findOrFail($id);
-            $student->matricule = strtoupper($request['matricule']);
-            $student->name = $request['name'];
-            $student->email = $request['email'];
-            $student->password = Hash::make($request['password']);
-            $student->phone = $request['phone'];
-            $student->dob = $request['dob'];
-            $student->gender = $request['gender'];
-            $student->marital_status = $request['marital_status'];
-            $student->role = "student";
-            $student->save();
+            $user = User::findOrFail($id);
+            $user->matricule = strtoupper($request['matricule']);
+            $user->name = $request['name'];
+            $user->email = $request['email'];
+            $user->password = Hash::make($request['password']);
+            $user->phone = $request['phone'];
+            $user->dob = $request['dob'];
+            $user->gender = $request['gender'];
+            $user->marital_status = $request['marital_status'];
+            $user->role = "student";
+            $user->save();
 
-            $department_id = DB::table('departments')->select('id')
-                                ->where('name', $request['department'])->first();
+            $student = Student::where('user_id', $id)->first();
+            $student->department_id = $request['department_id'];
+            $user->student()->save($student);
 
-            $student_details = DB::table('students')->where('user_id', $id);
-            $student_details->department_id = $department_id;
-
-            $student->student()->save($student_details);
-
-            $department = DB::table('departments')->where('id', $student_details->department_id)->first();
-            $faculty = DB::table('faculties')->where('id', $department->faculty_id)->first();
+            $department = Department::where('id', $student->department_id)->first();
+            $faculty = Faculty::where('id', $department->faculty_id)->first();
 
             $student_details = (object) [
-                "id" => $student->id,
-                "matricule" => strtoupper($student->matricule),
-                "name" => $student->name,
-                "email" => $student->email,
-                "password" => $student->password,
-                "phone" => $student->phone,
-                "dob"  => $student->dob,
-                "gender" => $student->gender,
-                "marital_status" => $student->marital_status,
+                "id" => $user->id,
+                "matricule" => strtoupper($user->matricule),
+                "name" => $user->name,
+                "email" => $user->email,
+                "password" => $user->password,
+                "phone" => $user->phone,
+                "dob"  => $user->dob,
+                "gender" => $user->gender,
+                "marital_status" => $user->marital_status,
+                'department_id' => $department->id,
                 'department' => $department->name,
                 'faculty' => $faculty->name
             ];
@@ -232,7 +228,8 @@ class StudentController extends Controller {
     public function destroy($id)
     {
         try {
-            User::findOrFail($id)->delete();
+            Student::findOrFail($id)->delete();
+            return response()->json(['message' => 'Successfully deleted'], 200);
         } catch (\Exception $e) {
             //return error message
             error_log('An error occurred caused by ' . $e);
