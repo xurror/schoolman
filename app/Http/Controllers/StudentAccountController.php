@@ -38,6 +38,7 @@ class StudentAccountController extends Controller
      */
     public function registerCourses(Request $request)
     {
+        DB::beginTransaction();
         try {
             $user = Auth::user();
             $student = Student::where('user_id', $user->id)->first();
@@ -53,9 +54,11 @@ class StudentAccountController extends Controller
             }
 
             $student->courses->sync($courses_id);
+            DB::commit();
             return response()->json(['message' => 'Courses successfully registered'], 200);
         } catch (\Exception $e) {
             //return error message
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
@@ -125,11 +128,12 @@ class StudentAccountController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'email' => 'string|email|max:255',
-            'password' => 'string|min:8',
-            'phone' => 'string|min:9|max:12',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
+            'phone' => 'required|string|min:9|max:12',
         ]);
 
+        DB::beginTransaction();
         try {
             $user = $request->user();
             $user->email = $request['email'];
@@ -138,10 +142,12 @@ class StudentAccountController extends Controller
             $user->marital_status = $request['marital_status'];
             $user->save();
 
+            DB::commit();
             //return successful response
             return response()->json(['user' => $user, 'message' => 'User updated'], 200);
         } catch (\Exception $e) {
             //return error message
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }

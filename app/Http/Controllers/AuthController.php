@@ -31,6 +31,7 @@ class AuthController extends Controller
             'marital_status' => 'required',
         ]);
 
+        DB::beginTransaction();
         try {
             $user = new User;
             $user->matricule = strtoupper($request['matricule']);
@@ -45,10 +46,11 @@ class AuthController extends Controller
             $user->save();
             //return successful response
             return response()->json(['user' => $user, 'message' => 'new User Created'], 200);
-
         } catch (Exception $e) {
             //return error message
-            return response()->json(['message' => 'User Registration Failed!'], 409);
+            DB::rollback();
+            error_log($e);
+            return response()->json(['message' => 'User Registration Failed!', 'logs' => $e], 409);
         }
     }
 
@@ -67,6 +69,7 @@ class AuthController extends Controller
             'role' => 'required|string',
         ]);
 
+        DB::beginTransaction();
         try {
             if (filter_var($request->input('username'), FILTER_VALIDATE_EMAIL)) {
                 $type = 'email';
@@ -88,6 +91,7 @@ class AuthController extends Controller
                 return $this->respondWithToken($user, $token);
             }
         } catch (\Exception $e) {
+            DB::rollback();
             error_log('An error occured' . $e);
             return response()->json(['message' => 'User not found', 'logs' => $e], 404);
         }

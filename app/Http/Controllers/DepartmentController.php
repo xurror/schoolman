@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use Exception;
+use App\Models\Faculty;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -40,15 +41,17 @@ class DepartmentController extends Controller
             'faculty_id' => 'required',
         ]);
 
+        DB::beginTransaction();
         try {
+            $faculty = Faculty::findOrFail($request['faculty_id']);
             $department = new Department();
-            $department->faculty_id = $request['faculty_id'];
             $department->name = $request['name'];
-            $department->save();
+            $faculty->departments()->save($department);
 
+            DB::commit();
             return response()->json(['Department' => $department, 'message' => 'Department Created'], 200);
         } catch (\Exception $e) {
-
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }
@@ -72,7 +75,7 @@ class DepartmentController extends Controller
             } else {
                 return response()->json(['Department' => $department], 200);
             }
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }
@@ -87,18 +90,21 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $department = Department::findOrFail($id);
-            $this->validate($request, [
-                'name' => 'required|string|min:5',
-                'faculty_id' => 'required',
-            ]);
+        $this->validate($request, [
+            'name' => 'required|string|min:5',
+            'faculty_id' => 'required',
+        ]);
 
+        DB::beginTransaction();
+        try {
+            $faculty = Faculty::findOrFail($request['faculty_id']);
+            $department = Department::findOrFail($id);
             $department->name = $request['name'];
-            $department->faculty_id =$request['faculty_id'];
-            $department->save();
+            $faculty->departments()->save($department);
+            DB::commit();
             return response()->json(['Department' => $department, 'message' => 'Department Updated'], 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
+            DB::rollback();
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }
@@ -112,10 +118,13 @@ class DepartmentController extends Controller
      */
     public function destroy($id)
     {
+        DB::beginTransaction();
         try {
             Department::findOrFail($id)->delete();
+            DB::commit();
             return response()->json(['message' => 'Successfully deleted'], 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
+            DB::rollback();
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }

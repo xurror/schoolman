@@ -38,7 +38,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->group(['prefix' => 'account/staff', 'middleware' => 'is_staff'], function () use ($router) {
             $router->put('/', 'StaffAccountController@update'); // Update profile
             $router->get('/courses', 'StaffAccountController@getCourses'); // Get staff courses and students
-            $router->post('/marks', 'StaffAccountController@registerMarks'); // record marks
+            $router->post('/register/marks', 'StaffAccountController@registerMarks'); // record marks
         });
 
         // Admin actions from Admin account

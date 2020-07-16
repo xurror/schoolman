@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class StaffAccountController extends Controller
@@ -29,13 +30,24 @@ class StaffAccountController extends Controller
             foreach($courses as $course) {
                 error_log($course->id);
                 $course_students = CourseStudent::where('course_id', $course->id)->get();
-                // error_log($course_students->id);
+                $course_students_list = array();
+                foreach ($course_students as $course_student) {
+                    $student = Student::findOrFail($course_student->student_id);
+                    $user = (object) [
+                        'matricule' => User::findOrFail($student->user_id)->matricule,
+                        'student_id' => $student->id,
+                        'ca_mark' => $course_student->ca_mark,
+                        'exam_mark' => $course_student->exam_mark,
+                        'grade' => $course_student->grade
+                    ];
+                    array_push($course_students_list, $user);
+                }
                 $course_details = (object) [
-                    'students' => $course_students,
                     'course_id' => $course->id,
                     'code' => strtoupper($course->code),
                     'title' => $course->title,
                     'credits' => $course->credits,
+                    'students' => $course_students_list,
                 ];
                 array_push($my_courses, $course_details);
             }
@@ -56,25 +68,37 @@ class StaffAccountController extends Controller
     public function registerMarks(Request $request)
     {
         $this->validate($request, [
-            'marks' => 'required',
+            'marks' => 'required|array',
         ]);
 
+        DB::beginTransaction();
         try {
             foreach ($request['marks'] as $mark) {
                 $user = User::where('matricule', strtoupper($mark['matricule']))->first();
+
+                if ($user == NULL) {
+                    return response()->json(['message' => 'Student matricule not found for this course'], 404);
+                }
+
                 $student = Student::where('user_id', $user->id)->first();
                 $course = Course::where('code', strtoupper($mark['code']))->first();
+
+                if ($course == NULL) {
+                    return response()->json(['message' => 'Course Code not found this staff'], 404);
+                }
 
                 $course_student = CourseStudent::where('student_id', $student->id)
                                                 ->where('course_id', $course->id)
                                                 ->first();
                 $course_student->ca_mark = $mark['ca_mark'];
                 $course_student->exam_mark = $mark['exam_mark'];
-                $course_student->grade = $mark['grade'];
+                $course_student->grade = strtoupper($mark['grade']);
                 $course_student->save();
             }
+            DB::commit();
             return response()->json(['message' => 'Successfully registered marks'], 200);
         } catch (\Exception $e) {
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }
@@ -83,11 +107,12 @@ class StaffAccountController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
-            'email' => 'string|email|max:255',
-            'password' => 'string|min:8',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
             'phone' => 'required|string|min:9|max:12',
         ]);
 
+        DB::beginTransaction();
         try {
             $staff = $request->user();
             $staff->email = $request['email'];
@@ -96,11 +121,12 @@ class StaffAccountController extends Controller
             $staff->marital_status = $request['marital_status'];
             $staff->save();
 
+            DB::commit();
             //return successful response
             return response()->json(['staff' => $staff, 'message' => 'Staff updated successfully'], 200);
-
         } catch (\Exception $e) {
             //return error message
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'Staff update Failed!', 'logs' => $e], 409);
         }

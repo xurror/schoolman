@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -49,6 +50,7 @@ class CourseController extends Controller
             'credits' => 'required|integer',
         ]);
 
+        DB::beginTransaction();
         try {
             $course = new Course();
             $course->department_id = $request['department_id'];
@@ -58,9 +60,10 @@ class CourseController extends Controller
             $course->credits = $request['credits'];
             $course->save();
 
+            DB::commit();
             return response()->json(['Course' => $course, 'message' => 'Department Created'], 200);
         } catch (\Exception $e) {
-
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'An error occurred!', 'logs' => $e], 409);
         }
@@ -102,6 +105,7 @@ class CourseController extends Controller
      */
     public function update(Request $request, $id)
     {
+        DB::beginTransaction();
         try {
             $course = Course::findOrFail($id);
             $this->validate($request, [
@@ -118,8 +122,10 @@ class CourseController extends Controller
             $course->title = $request['title'];
             $course->credits = $request['credits'];
             $course->save();
+            DB::commit();
             return response()->json(['Course' => $course, 'message' => 'Department Updated'], 200);
         } catch(\Exception $e) {
+            DB::rollback();
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }
@@ -133,10 +139,13 @@ class CourseController extends Controller
      */
     public function destroy($id)
     {
+        DB::beginTransaction();
         try {
             Course::findOrFail($id)->delete();
+            DB::commit();
             return response()->json(['message' => 'Successfully deleted'], 200);
         } catch(\Exception $e) {
+            DB::rollback();
             error_log('An error occurred ' . $e);
             return response()->json(['message' => 'An error Occurred', 'logs' => $e], 500);
         }

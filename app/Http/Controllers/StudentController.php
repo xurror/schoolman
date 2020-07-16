@@ -8,7 +8,7 @@ use App\Models\Faculty;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\User;
-use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller {
@@ -41,9 +41,9 @@ class StudentController extends Controller {
                     "marital_status" => $user->marital_status,
                     'department_id' => $department->id,
                     'department' => $department->name,
+                    'faculty_id' => $faculty->id,
                     'faculty' => $faculty->name
                 ];
-
                 array_push($student_list, $student_details);
             }
             return response()->json(['students' => $student_list, 'message' => 'All students and details'], 200);
@@ -73,25 +73,27 @@ class StudentController extends Controller {
             'department_id' => 'required',
         ]);
 
+        DB::beginTransaction();
         try {
-            $user = new User();
-            $user->matricule = strtoupper($request['matricule']);
-            $user->name = $request['name'];
-            $user->email = $request['email'];
-            $user->password = Hash::make($request['password']);
-            $user->phone = $request['phone'];
-            $user->dob = $request['dob'];
-            $user->gender = $request['gender'];
-            $user->marital_status = $request['marital_status'];
-            $user->role = "student";
-            $user->save();
 
-            $student = new Student(['department_id' => $request['department_id']]);
+            $user = User::create([
+                'matricule' => strtoupper($request['matricule']),
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'phone' => $request['phone'],
+                'dob' => $request['dob'],
+                'gender' => $request['gender'],
+                'marital_status' => $request['marital_status'],
+                'role' => 'student',
+            ]);
+
+            $student = new Student();
+            $student->department_id = $request['department_id'];
             $user->student()->save($student);
 
-            $department = Department::where('id', $student->department_id)->first();
+            $department = Department::where('id', $request['department_id'])->first();
             $faculty = Faculty::where('id', $department->faculty_id)->first();
-
             $student_details = (object) [
                 "id" => $user->id,
                 "matricule" => strtoupper($user->matricule),
@@ -104,14 +106,15 @@ class StudentController extends Controller {
                 "marital_status" => $user->marital_status,
                 'department_id' => $department->id,
                 'department' => $department->name,
+                'faculty_id' => $faculty->id,
                 'faculty' => $faculty->name
             ];
-
-            //return successful response
+            DB::commit();
             return response()->json(['student' => $student_details, 'message' => 'new Student Created'], 200);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             //return error message
+            DB::rollback();
             error_log($e);
             return response()->json(['message' => 'Student Registration Failed!', 'logs' => $e], 409);
         }
@@ -144,10 +147,11 @@ class StudentController extends Controller {
                 "marital_status" => $user->marital_status,
                 'department_id' => $department->id,
                 'department' => $department->name,
+                'faculty_id' => $faculty->id,
                 'faculty' => $faculty->name
             ];
             return $student_details;
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'An error occurred caused by ' . $e], 500);
         }
@@ -163,9 +167,9 @@ class StudentController extends Controller {
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'matricule' => 'required|string|min:5|max:15|unique:users',
+            'matricule' => 'required|string|min:5|max:15',
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8',
             'phone' => 'required|string|min:9|max:12',
             'dob' => 'required|date',
@@ -174,6 +178,7 @@ class StudentController extends Controller {
             'department_id' => 'required',
         ]);
 
+        DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
             $user->matricule = strtoupper($request['matricule']);
@@ -206,13 +211,15 @@ class StudentController extends Controller {
                 "marital_status" => $user->marital_status,
                 'department_id' => $department->id,
                 'department' => $department->name,
+                'faculty_id' => $faculty->id,
                 'faculty' => $faculty->name
             ];
 
+            DB::commit();
             //return successful response
             return response()->json(['user' => $student_details, 'message' => 'Student updated successfully'], 200);
-
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            DB::rollback();
             //return error message
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'Student Update Failed!', 'logs' => $e], 409);
@@ -227,11 +234,14 @@ class StudentController extends Controller {
      */
     public function destroy($id)
     {
+        DB::beginTransaction();
         try {
             Student::findOrFail($id)->delete();
+            DB::commit();
             return response()->json(['message' => 'Successfully deleted'], 200);
         } catch (\Exception $e) {
             //return error message
+            DB::rollback();
             error_log('An error occurred caused by ' . $e);
             return response()->json(['message' => 'User update Failed!', 'logs' => $e], 409);
         }
