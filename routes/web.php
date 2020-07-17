@@ -17,6 +17,7 @@ $router->get('/', function () use ($router) {
 
 // API route group
 $router->group(['prefix' => 'api'], function () use ($router) {
+    // $router->get('/courses/all', 'StudentAccountController@getAllCourses'); // Get all registered courses
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('/register', 'AuthController@register');
         $router->post('/login', 'AuthController@login');
@@ -28,10 +29,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         // Student Actions from Student Account
         $router->group(['prefix' => 'account/student', 'middleware' => 'is_student'], function () use ($router) {
             $router->put('/', 'StudentAccountController@update'); // Update profile
-            $router->get('/courses', 'StudentAccountController@getRegisteredCourses'); // Get all registered courses
             $router->get('/results', 'StudentAccountController@getResults'); // Get All results
             $router->get('/fees', 'StudentAccountController@getFees'); // Get fees
-            $router->post('/courses', 'StudentAccountController@registerCourses'); // Register courses.
+            $router->get('/courses/all', 'StudentAccountController@getAllCourses'); // Get all registered courses
+            $router->get('/courses/registered', 'StudentAccountController@getRegisteredCourses'); // Get all registered courses
+            $router->post('/courses/register', 'StudentAccountController@registerCourses'); // Register courses.
         });
 
         // Staff actions from Staff account

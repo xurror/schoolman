@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,30 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentAccountController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllCourses()
+    {
+        try {
+            $departments = Department::select('id', 'faculty_id', 'name')->get();
+            $departments_courses = array();
+            foreach($departments as $department) {
+                $courses = Course::select('id', 'department_id', 'staff_id', 'code', 'title', 'credits')
+                                ->where('department_id', $department->id)->get();                                ;
+                $department['courses'] = $courses;
+                array_push($departments_courses, $department);
+            }
+            return $departments_courses;
+        } catch (\Exception $e) {
+            //return error message
+            error_log('An error occurred caused by ' . $e);
+            return response()->json(['message' => 'An Error Occurred!', 'logs' => $e], 409);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
