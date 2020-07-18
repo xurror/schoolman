@@ -17,7 +17,7 @@ class CreateStudentsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('department_id')->constrained();
-            // $table->date('dor')->useCurrent()->nullable(false)->comment('Date of registration');
+            $table->date('doa')->nullable(false)->comment('Date of admission');
             $table->softDeletes();
             $table->timestamps();
         });

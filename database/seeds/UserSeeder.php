@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
             'marital_status' => 'single',
             'role' => 'student',
         ]);
-        $student_details = new Student(['department_id' => 1,]);
+        $student_details = new Student(['department_id' => 1, 'doa' => date('Y-m-d')]);
         $student->student()->save($student_details);
 
         $staff = User::create([
@@ -62,8 +62,9 @@ class UserSeeder extends Seeder
         $staff->save();
         $staff_details = new Staff([
             'department_id' => 1,
-            'nature_of_job' => 'lecturer',
+            'nature_of_job' => 'teaching',
             'basic_pay' => '100000',
+            'doa' => date('Y-m-d')
         ]);
         $staff->student()->save($staff_details);
     }

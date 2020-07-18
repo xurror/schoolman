@@ -17,9 +17,9 @@ class CreateStaffTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('department_id')->constrained();
-            $table->string('nature_of_job')->nullable(false);
+            $table->enum('nature_of_job', ['teaching', 'non-teaching'])->nullable(false);
             $table->decimal('basic_pay', 10, 2)->nullable(false);
-            // $table->date('dh')->useCurrent()->nullable(false)->comment('Date hired');
+            $table->date('doa')->nullable(false)->comment('Date of admission');
             $table->softDeletes();
             $table->timestamps();
         });

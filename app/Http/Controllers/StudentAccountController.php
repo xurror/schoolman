@@ -24,7 +24,7 @@ class StudentAccountController extends Controller
             $departments_courses = array();
             foreach($departments as $department) {
                 $courses = Course::select('id', 'department_id', 'staff_id', 'code', 'title', 'credits')
-                                ->where('department_id', $department->id)->get();                                ;
+                                ->where('department_id', $department->id)->get();
                 $department['courses'] = $courses;
                 array_push($departments_courses, $department);
             }

@@ -17,7 +17,7 @@ $router->get('/', function () use ($router) {
 
 // API route group
 $router->group(['prefix' => 'api'], function () use ($router) {
-    // $router->get('/courses/all', 'StudentAccountController@getAllCourses'); // Get all registered courses
+
     $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->post('/register', 'AuthController@register');
         $router->post('/login', 'AuthController@login');
@@ -47,6 +47,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->group(['prefix' => 'admin', 'middleware' => 'is_admin'], function () use ($router) {
             // Account Management(Update profile)
             $router->put('/', 'AdminController@update'); // Update profile
+
+            // Reports Management
+            $router->get('/reports', 'ReportController@index'); // Get reports
 
             // Students Management
             $router->get('/students', ['uses' => 'StudentController@all']); // Get All students
