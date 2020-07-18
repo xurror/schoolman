@@ -51,12 +51,12 @@ class ReportController extends Controller
                                             'users.dob', 'users.gender', 'users.marital_status', 'staff.doa'
                                         )->where('staff.doa', $date)->get();
                         if (!$staff->isEmpty()) {
-                            array_push($staff_per_date, [$date->format('Y-m-d') => $staff]);
+                            $staff_per_date[$date->format('Y-m-d')] = $staff;
                         } else {
                             continue;
                         }
                     }
-                    return response()->json(['staff_per_date' => $staff_per_date], 200);
+                    return $staff_per_date;
 
                 } else {
                     return response()->json(['message' => 'staff category not found'], 404);
@@ -81,11 +81,11 @@ class ReportController extends Controller
                                                 )->where('students.id', $course_student->student_id)->get();
                             array_push($students, $student);
                         }
-                        array_push($class, [$course->code => $students]);
+                        $class[$course->code] = $students;
 
                     }
 
-                    return response()->json(['classes' => $class], 200);
+                    return response()->json($class, 200);
 
                 } else if ($request['filter'] == 'datewise') {
                     $begin = new \DateTime('2020-01-01');
@@ -103,14 +103,14 @@ class ReportController extends Controller
                                         )->where('students.doa', $date)->get();
 
                         if (!$students->isEmpty()) {
-                            array_push($students_per_date, [$date->format('Y-m-d') => $students]);
+                            $students_per_date[$date->format('Y-m-d')] = $students;
                         } else {
                             continue;
                         }
 
                     }
 
-                    return response()->json(['students_per_date' => $students_per_date], 200);
+                    return response()->json($students_per_date, 200);
 
                 } else if ($request['filter'] == 'namewise') {
                     $students = Student::join('users', 'users.id', '=', 'students.user_id')

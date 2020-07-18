@@ -74,8 +74,13 @@ class StudentAccountController extends Controller
             $courses_id = array();
 
             foreach($request['codes'] as $code) {
-                $course_id = Course::where('code', strtoupper($code['code']))->first()->id;
-                array_push($courses_id, $course_id);
+                $course = Course::where('code', strtoupper($code['code']))->first();
+                if ($course == NULL) {
+                    return response()->json(['message' => 'Course not found'], 404);
+                } else {
+                    $course_id = $course->id;
+                    array_push($courses_id, $course_id);
+                }
             }
 
             $student->courses()->sync($courses_id);
