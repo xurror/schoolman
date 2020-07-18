@@ -18,8 +18,9 @@ $router->get('/', function () use ($router) {
 // API route group
 $router->group(['prefix' => 'api'], function () use ($router) {
 
+    // $router->get('/reports', 'ReportController@index'); // Get reports
     $router->group(['prefix' => 'auth'], function () use ($router) {
-        $router->post('/register', 'AuthController@register');
+        $router->post('/register/{matricule}', 'AuthController@register');
         $router->post('/login', 'AuthController@login');
     });
 

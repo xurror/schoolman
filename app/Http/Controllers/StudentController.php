@@ -37,6 +37,7 @@ class StudentController extends Controller {
                     "password" => $user->password,
                     "phone" => $user->phone,
                     "dob"  => $user->dob,
+                    "doa"  => $student_details->doa,
                     "gender" => $user->gender,
                     "marital_status" => $user->marital_status,
                     'department_id' => $department->id,
@@ -90,6 +91,7 @@ class StudentController extends Controller {
 
             $student = new Student();
             $student->department_id = $request['department_id'];
+            $student->doa = date('Y-m-d');
             $user->student()->save($student);
 
             $department = Department::where('id', $request['department_id'])->first();
@@ -102,6 +104,7 @@ class StudentController extends Controller {
                 "password" => $user->password,
                 "phone" => $user->phone,
                 "dob"  => $user->dob,
+                "doa"  => $student->doa,
                 "gender" => $user->gender,
                 "marital_status" => $user->marital_status,
                 'department_id' => $department->id,
@@ -143,6 +146,7 @@ class StudentController extends Controller {
                 "password" => $user->password,
                 "phone" => $user->phone,
                 "dob"  => $user->dob,
+                "doa"  => $student->doa,
                 "gender" => $user->gender,
                 "marital_status" => $user->marital_status,
                 'department_id' => $department->id,
@@ -207,6 +211,7 @@ class StudentController extends Controller {
                 "password" => $user->password,
                 "phone" => $user->phone,
                 "dob"  => $user->dob,
+                "doa"  => $student->doa,
                 "gender" => $user->gender,
                 "marital_status" => $user->marital_status,
                 'department_id' => $department->id,
@@ -236,7 +241,9 @@ class StudentController extends Controller {
     {
         DB::beginTransaction();
         try {
-            Student::findOrFail($id)->delete();
+            $user_id = Student::findOrFail($id)->user_id;
+            $user = User::find($user_id);
+            $user->student()->delete();
             DB::commit();
             return response()->json(['message' => 'Successfully deleted'], 200);
         } catch (\Exception $e) {

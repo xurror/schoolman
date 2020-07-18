@@ -36,6 +36,7 @@ class StaffController extends Controller
                     "password" => $staffm->password,
                     "phone" => $staffm->phone,
                     "dob"  => $staffm->dob,
+                    "doa"  => $staffm->doa,
                     "gender" => $staffm->gender,
                     "marital_status" => $staffm->marital_status,
                     "nature_of_job" => $staff_extras->nature_of_job,
@@ -96,6 +97,7 @@ class StaffController extends Controller
             $staff = new Staff();
             $staff->department_id = $request['department_id'];
             $staff->user_id = $user->id;
+            $staff->doa = date('Y-m-d');
             $staff->department_id = $request['department_id'];
             $staff->nature_of_job = $request['nature_of_job'];
             $staff->basic_pay = $request['basic_pay'];
@@ -111,6 +113,7 @@ class StaffController extends Controller
                 "password" => $user->password,
                 "phone" => $user->phone,
                 "dob"  => $user->dob,
+                "doa"  => $staff->doa,
                 "gender" => $user->gender,
                 "marital_status" => $user->marital_status,
                 "nature_of_job" => $staff->nature_of_job,
@@ -155,6 +158,7 @@ class StaffController extends Controller
                 "password" => $staff->password,
                 "phone" => $staff->phone,
                 "dob"  => $staff->dob,
+                "doa"  => $staff_extras->doa,
                 "gender" => $staff->gender,
                 "marital_status" => $staff->marital_status,
                 "nature_of_job" => $staff_extras->nature_of_job,
@@ -228,6 +232,7 @@ class StaffController extends Controller
                 "password" => $user->password,
                 "phone" => $user->phone,
                 "dob"  => $user->dob,
+                "doa"  => $staff->doa,
                 "gender" => $user->gender,
                 "marital_status" => $user->marital_status,
                 "nature_of_job" => $staff->nature_of_job,
@@ -259,7 +264,9 @@ class StaffController extends Controller
     {
         DB::beginTransaction();
         try {
-            Staff::findOrFail($id)->delete();
+            $user_id = Staff::findOrFail($id)->user_id;
+            $user = User::find($user_id);
+            $user->staff()->delete();
             DB::commit();
             return response()->json(['message' => 'Successfully deleted'], 200);
         } catch (\Exception $e) {

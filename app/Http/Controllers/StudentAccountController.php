@@ -78,7 +78,7 @@ class StudentAccountController extends Controller
                 array_push($courses_id, $course_id);
             }
 
-            $student->courses->sync($courses_id);
+            $student->courses()->sync($courses_id);
             DB::commit();
             return response()->json(['message' => 'Courses successfully registered'], 200);
         } catch (\Exception $e) {

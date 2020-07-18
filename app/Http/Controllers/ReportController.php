@@ -110,7 +110,7 @@ class ReportController extends Controller
 
                     }
 
-                    return response()->json(['students_per_date' => (object) $students_per_date], 200);
+                    return response()->json(['students_per_date' => $students_per_date], 200);
 
                 } else if ($request['filter'] == 'namewise') {
                     $students = Student::join('users', 'users.id', '=', 'students.user_id')
